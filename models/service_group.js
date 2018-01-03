@@ -20,9 +20,24 @@
 
 
 //dependencies
+const path = require('path');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const randomColor = require('randomcolor');
+const mongooseExists = require('mongoose-exists');
+const mongooseAutoset = require('mongoose-autoset');
+const mongooseRegexSearch = require('mongoose-regex-search');
+const mongoosePaginate = require('express-mquery').plugin;
+const mongooseShow =
+  require(path.join(__dirname, '..', 'libs', 'mongoose', 'show'));
+const mongooseEdit =
+  require(path.join(__dirname, '..', 'libs', 'mongoose', 'edit'));
+const mongooseList =
+  require(path.join(__dirname, '..', 'libs', 'mongoose', 'list'));
+const mongooseReload =
+  require(path.join(__dirname, '..', 'libs', 'mongoose', 'reload'));
+const mongooseSoftDelete =
+  require(path.join(__dirname, '..', 'libs', 'mongoose', 'soft_delete'));
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
@@ -182,6 +197,16 @@ ServiceGroupSchema.pre('validate', function (next) {
 
 });
 
+// plugins
+ServiceGroupSchema.plugin(mongooseExists);
+ServiceGroupSchema.plugin(mongooseAutoset);
+ServiceGroupSchema.plugin(mongooseRegexSearch);
+ServiceGroupSchema.plugin(mongooseShow);
+ServiceGroupSchema.plugin(mongooseEdit);
+ServiceGroupSchema.plugin(mongooseReload);
+ServiceGroupSchema.plugin(mongooseList);
+ServiceGroupSchema.plugin(mongooseSoftDelete);
+ServiceGroupSchema.plugin(mongoosePaginate);
 
 /**
  * @name ServiceGroup
