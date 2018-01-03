@@ -2,7 +2,6 @@ majifix-service-group
 ====================
 
 [![Build Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=master)](https://travis-ci.org/CodeTanzania/majifix-service-group)
-[![Develop Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service-group)
 [![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service-group/status.svg?style=flat-square)](https://david-dm.org/CodeTanzania/majifix-service-group)
 
 majifix service group
