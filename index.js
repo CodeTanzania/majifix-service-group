@@ -1,3 +1,7 @@
+import {
+  Model
+} from 'mongoose';
+
 'use strict';
 
 /**
@@ -8,8 +12,12 @@
  * @public
  */
 
+const path = require('path');
 let mongoose = require('mongoose');
 const _ = require('lodash');
+const Model = require(path.join(__dirname, 'models', 'service_group'));
+const serviceGroupRouter = require(path.join(__dirname, 'http', 'router'));
+
 
 module.exports = function (options) {
 
@@ -17,8 +25,12 @@ module.exports = function (options) {
 
   mongoose = _.get(options, 'mongoose', mongoose);
 
+  const routerOptions = _.get(options, 'router', {});
+
+  const Router = serviceGroupRouter(routerOptions);
+
   return {
-    model: '',
-    router: ''
+    model: Model,
+    router: Router
   };
 };
