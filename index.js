@@ -1,7 +1,3 @@
-import {
-  Model
-} from 'mongoose';
-
 'use strict';
 
 /**

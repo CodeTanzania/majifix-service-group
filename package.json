@@ -43,7 +43,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
-    "majifix-jurisdiction": "git+ssh://git@github.com/CodeTanzania/majifix-jurisdiction.git#develop",
+    "majifix-jurisdiction": "git+https://git@github.com/CodeTanzania/majifix-jurisdiction.git#develop",
     "mocha": "^4.1.0",
     "superagent": "^3.8.2",
     "supertest": "^3.0.0"
