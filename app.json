@@ -1,0 +1,14 @@
+{
+  "name": "majifix-service-group",
+  "description": "A representation of an entity that group service offered by a jurisdiction(s) into meaningful categories e.g Sanitation.",
+  "repository": "https://github.com/CodeTanzania/majifix-service-group.git",
+  "keywords": [
+    "open311",
+    "311",
+    "majifix",
+    "jurisdiction"
+  ],
+  "addons": [
+    "mongolab"
+  ]
+}
