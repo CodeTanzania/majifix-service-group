@@ -2,7 +2,7 @@
   "name": "majifix-service-group",
   "version": "1.0.0",
   "description": "A representation of an entity that group service offered by a jurisdiction(s) into meaningful categories e.g Sanitation.",
-  "title": "MajiFix Account",
+  "title": "MajiFix Service Group",
   "url": "https://majifix-service-group.herokuapp.com/v1.0.0",
   "sampleUrl": "https://majifix-service-group.herokuapp.com/v1.0.0",
   "template":
