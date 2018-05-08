@@ -92,7 +92,7 @@ describe('ServiceGroup', function () {
 
     it('should be able to search with options', function (done) {
 
-      const options = { filter: { q: servicegroups[0].name } };
+      const options = { filter: { q: servicegroups[0].name.en } };
       ServiceGroup
         .get(options, function (error, results) {
           expect(error).to.not.exist;

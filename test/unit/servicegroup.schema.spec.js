@@ -49,38 +49,65 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should have name field', function () {
+    describe('name', function () {
 
-      const name = ServiceGroup.schema.tree.name;
-      const instance = ServiceGroup.schema.paths.name.instance;
+      it('should be an embedded sub-document', function () {
+        const name = ServiceGroup.schema.tree.name;
+        const instance = ServiceGroup.schema.paths.name.instance;
+        const tree = ServiceGroup.schema.tree.name.tree;
 
-      expect(instance).to.be.equal('String');
-      expect(name).to.exist;
-      expect(name).to.be.an('object');
-      expect(name.type).to.be.a('function');
-      expect(name.type.name).to.be.equal('String');
-      expect(name.required).to.be.true;
-      expect(name.trim).to.be.true;
-      expect(name.index).to.be.true;
-      expect(name.searchable).to.be.true;
+        expect(instance).to.be.equal('Embedded');
+        expect(name).to.exist;
+        expect(name).to.be.an('object');
+        expect(tree).to.exist;
+        expect(tree.en).to.exist;
+      });
 
+      it('should have type `en` locale field', function () {
+        const instance = ServiceGroup.schema.paths.name.schema.paths.en.instance;
+        const en = ServiceGroup.schema.tree.name.tree.en;
+
+        expect(instance).to.be.equal('String');
+        expect(en).to.exist;
+        expect(en).to.be.an('object');
+        expect(en.type).to.be.a('function');
+        expect(en.type.name).to.be.equal('String');
+        expect(en.required).to.be.true;
+        expect(en.trim).to.be.true;
+        expect(en.index).to.be.true;
+        expect(en.required).to.be.true;
+        expect(en.searchable).to.be.true;
+
+      });
     });
 
+    describe('description', function () {
+      it('should be an embedded sub-document', function () {
+        const description = ServiceGroup.schema.tree.description;
+        const instance = ServiceGroup.schema.paths.description.instance;
+        const tree = ServiceGroup.schema.tree.description.tree;
 
-    it('should have description field', function () {
+        expect(instance).to.be.equal('Embedded');
+        expect(description).to.exist;
+        expect(description).to.be.an('object');
+        expect(tree).to.exist;
+        expect(tree.en).to.exist;
+      });
 
-      const description = ServiceGroup.schema.tree.description;
-      const instance = ServiceGroup.schema.paths.description.instance;
+      it('should have type `en` locale field', function () {
+        const instance = ServiceGroup.schema.paths.description.schema.paths.en.instance;
+        const en = ServiceGroup.schema.tree.description.tree.en;
 
-      expect(instance).to.be.equal('String');
-      expect(description).to.exist;
-      expect(description).to.be.an('object');
-      expect(description.type).to.be.a('function');
-      expect(description.type.name).to.be.equal('String');
-      expect(description.trim).to.be.true;
-      expect(description.searchable).to.be.true;
-      expect(description.index).to.be.true;
+        expect(instance).to.be.equal('String');
+        expect(en).to.exist;
+        expect(en).to.be.an('object');
+        expect(en.type).to.be.a('function');
+        expect(en.type.name).to.be.equal('String');
+        expect(en.trim).to.be.true;
+        expect(en.index).to.be.true;
+        expect(en.searchable).to.be.true;
 
+      });
     });
 
     it('should have color field', function () {

@@ -88,7 +88,7 @@ describe('ServiceGroup', function () {
           const found = response.body;
           expect(found._id).to.exist;
           expect(found._id).to.be.equal(servicegroup._id.toString());
-          expect(found.name).to.be.equal(servicegroup.name);
+          expect(found.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
@@ -114,7 +114,7 @@ describe('ServiceGroup', function () {
 
           expect(patched._id).to.exist;
           expect(patched._id).to.be.equal(servicegroup._id.toString());
-          expect(patched.name).to.be.equal(servicegroup.name);
+          expect(patched.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
@@ -136,11 +136,11 @@ describe('ServiceGroup', function () {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
-          const puted = response.body;
+          const updated = response.body;
 
-          expect(puted._id).to.exist;
-          expect(puted._id).to.be.equal(servicegroup._id.toString());
-          expect(puted.name).to.be.equal(servicegroup.name);
+          expect(updated._id).to.exist;
+          expect(updated._id).to.be.equal(servicegroup._id.toString());
+          expect(updated.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
@@ -163,7 +163,7 @@ describe('ServiceGroup', function () {
 
           expect(deleted._id).to.exist;
           expect(deleted._id).to.be.equal(servicegroup._id.toString());
-          expect(deleted.name).to.be.equal(servicegroup.name);
+          expect(deleted.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
