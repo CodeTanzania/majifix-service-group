@@ -5,7 +5,7 @@ const path = require('path');
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { expect } = require('chai');
-const { ServiceGroup, app } = require(path.join(__dirname, '..', '..'));
+const { ServiceGroup, app, info } = require(path.join(__dirname, '..', '..'));
 
 
 describe('ServiceGroup', function () {
@@ -28,7 +28,7 @@ describe('ServiceGroup', function () {
       servicegroup = ServiceGroup.fake();
 
       request(app)
-        .post('/v1.0.0/servicegroups')
+        .post(`/v${info.version}/servicegroups`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(servicegroup)
@@ -52,7 +52,7 @@ describe('ServiceGroup', function () {
     it('should handle HTTP GET on /servicegroups', function (done) {
 
       request(app)
-        .get('/v1.0.0/servicegroups')
+        .get(`/v${info.version}/servicegroups`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
@@ -78,7 +78,7 @@ describe('ServiceGroup', function () {
     it('should handle HTTP GET on /servicegroups/id:', function (done) {
 
       request(app)
-        .get(`/v1.0.0/servicegroups/${servicegroup._id}`)
+        .get(`/v${info.version}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
@@ -88,7 +88,7 @@ describe('ServiceGroup', function () {
           const found = response.body;
           expect(found._id).to.exist;
           expect(found._id).to.be.equal(servicegroup._id.toString());
-          expect(found.name).to.be.equal(servicegroup.name);
+          expect(found.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
@@ -101,7 +101,7 @@ describe('ServiceGroup', function () {
       const patch = servicegroup.fakeOnly('name');
 
       request(app)
-        .patch(`/v1.0.0/servicegroups/${servicegroup._id}`)
+        .patch(`/v${info.version}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(patch)
@@ -114,7 +114,7 @@ describe('ServiceGroup', function () {
 
           expect(patched._id).to.exist;
           expect(patched._id).to.be.equal(servicegroup._id.toString());
-          expect(patched.name).to.be.equal(servicegroup.name);
+          expect(patched.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
@@ -127,7 +127,7 @@ describe('ServiceGroup', function () {
       const put = servicegroup.fakeOnly('name');
 
       request(app)
-        .put(`/v1.0.0/servicegroups/${servicegroup._id}`)
+        .put(`/v${info.version}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(put)
@@ -136,11 +136,11 @@ describe('ServiceGroup', function () {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
-          const puted = response.body;
+          const updated = response.body;
 
-          expect(puted._id).to.exist;
-          expect(puted._id).to.be.equal(servicegroup._id.toString());
-          expect(puted.name).to.be.equal(servicegroup.name);
+          expect(updated._id).to.exist;
+          expect(updated._id).to.be.equal(servicegroup._id.toString());
+          expect(updated.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 
@@ -152,7 +152,7 @@ describe('ServiceGroup', function () {
       done) {
 
       request(app)
-        .delete(`/v1.0.0/servicegroups/${servicegroup._id}`)
+        .delete(`/v${info.version}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
@@ -163,7 +163,7 @@ describe('ServiceGroup', function () {
 
           expect(deleted._id).to.exist;
           expect(deleted._id).to.be.equal(servicegroup._id.toString());
-          expect(deleted.name).to.be.equal(servicegroup.name);
+          expect(deleted.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
 

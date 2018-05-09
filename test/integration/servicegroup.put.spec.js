@@ -39,7 +39,7 @@ describe('ServiceGroup', function () {
           expect(error).to.not.exist;
           expect(updated).to.exist;
           expect(updated._id).to.eql(servicegroup._id);
-          expect(updated.name).to.eql(servicegroup.name);
+          expect(updated.name.en).to.eql(servicegroup.name.en);
           done(error, updated);
         });
     });

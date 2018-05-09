@@ -29,7 +29,7 @@ describe('ServiceGroup', function () {
           expect(error).to.not.exist;
           expect(created).to.exist;
           expect(created._id).to.eql(servicegroup._id);
-          expect(created.name).to.eql(servicegroup.name);
+          expect(created.name.en).to.eql(servicegroup.name.en);
           expect(created.code).to.eql(servicegroup.code);
           done(error, created);
         });
