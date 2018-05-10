@@ -28,7 +28,9 @@ describe('ServiceGroup', function () {
         });
     });
 
+    it('should expose default locale `en` when not set',function(){
+      expect(ServiceGroup.DEFAULT_LOCALE).to.exist;
+      expect(ServiceGroup.DEFAULT_LOCALE).to.equal('en');
+    });
   });
-
-
 });
