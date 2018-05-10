@@ -37,7 +37,7 @@ function boot() {
     },
 
     function seed(jurisdiction, next) {
-      /* fake statuses */
+      /* fake services */
       samples = _.map(samples, function (sample, index) {
         if ((index % 2 === 0)) {
           sample.jurisdiction = jurisdiction;
