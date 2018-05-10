@@ -14,6 +14,7 @@
  * @author lally elias <lallyelias87@mail.com>
  * @since  0.1.0
  * @version 0.1.0
+ * @license MIT
  * @example
  *
  * const { app } = require('majifix-service-group');
@@ -47,8 +48,9 @@ const fields = [
 const info = _.merge({}, _.pick(pkg, fields));
 
 
-/* ensure models */
+/* ensure api version */
 process.env.API_VERSION = (process.env.API_VERSION || info.version);
+
 
 /* import models */
 const ServiceGroup =
@@ -58,8 +60,10 @@ const ServiceGroup =
 const router =
   require(path.join(__dirname, 'lib', 'http.router'));
 
+
 /* export package(module) info */
 exports.info = info;
+
 
 /* export servicegroup model */
 exports.ServiceGroup = ServiceGroup;

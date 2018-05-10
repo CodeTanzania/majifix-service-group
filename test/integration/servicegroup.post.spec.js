@@ -2,14 +2,24 @@
 
 /* dependencies */
 const path = require('path');
-const mongoose = require('mongoose');
 const { expect } = require('chai');
+const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
 describe('ServiceGroup', function () {
 
+  let jurisdiction;
+
   before(function (done) {
-    mongoose.connect('mongodb://localhost/majifix-servicegroup', done);
+    Jurisdiction.remove(done);
+  });
+
+  before(function (done) {
+    jurisdiction = Jurisdiction.fake();
+    jurisdiction.post(function (error, created) {
+      jurisdiction = created;
+      done(error, created);
+    });
   });
 
   before(function (done) {
@@ -23,6 +33,7 @@ describe('ServiceGroup', function () {
     it('should be able to post', function (done) {
 
       servicegroup = ServiceGroup.fake();
+      servicegroup.jurisdiction = jurisdiction;
 
       ServiceGroup
         .post(servicegroup, function (error, created) {
@@ -31,6 +42,13 @@ describe('ServiceGroup', function () {
           expect(created._id).to.eql(servicegroup._id);
           expect(created.name.en).to.eql(servicegroup.name.en);
           expect(created.code).to.eql(servicegroup.code);
+
+          //assert jurisdiction
+          expect(created.jurisdiction).to.exist;
+          expect(created.jurisdiction.code)
+            .to.eql(servicegroup.jurisdiction.code);
+          expect(created.jurisdiction.name)
+            .to.eql(servicegroup.jurisdiction.name);
           done(error, created);
         });
     });
@@ -60,6 +78,10 @@ describe('ServiceGroup', function () {
 
   after(function (done) {
     ServiceGroup.remove(done);
+  });
+
+  after(function (done) {
+    Jurisdiction.remove(done);
   });
 
 });

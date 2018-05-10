@@ -2,15 +2,26 @@
 
 /* dependencies */
 const path = require('path');
-const mongoose = require('mongoose');
 const { expect } = require('chai');
+const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
 describe('ServiceGroup', function () {
 
+  let jurisdiction;
+
   before(function (done) {
-    mongoose.connect('mongodb://localhost/majifix-servicegroup', done);
+    Jurisdiction.remove(done);
   });
+
+  before(function (done) {
+    jurisdiction = Jurisdiction.fake();
+    jurisdiction.post(function (error, created) {
+      jurisdiction = created;
+      done(error, created);
+    });
+  });
+
 
   before(function (done) {
     ServiceGroup.remove(done);
@@ -18,30 +29,38 @@ describe('ServiceGroup', function () {
 
   describe('static delete', function () {
 
-    let account;
+    let servicegroup;
 
     before(function (done) {
-      const fake = ServiceGroup.fake();
-      fake
+      servicegroup = ServiceGroup.fake();
+      servicegroup.jurisdiction = jurisdiction;
+      servicegroup
         .post(function (error, created) {
-          account = created;
+          servicegroup = created;
           done(error, created);
         });
     });
 
     it('should be able to delete', function (done) {
       ServiceGroup
-        .del(account._id, function (error, deleted) {
+        .del(servicegroup._id, function (error, deleted) {
           expect(error).to.not.exist;
           expect(deleted).to.exist;
-          expect(deleted._id).to.eql(account._id);
+          expect(deleted._id).to.eql(servicegroup._id);
+
+          //assert jurisdiction
+          expect(deleted.jurisdiction).to.exist;
+          expect(deleted.jurisdiction.code)
+            .to.eql(servicegroup.jurisdiction.code);
+          expect(deleted.jurisdiction.name)
+            .to.eql(servicegroup.jurisdiction.name);
           done(error, deleted);
         });
     });
 
     it('should throw if not exists', function (done) {
       ServiceGroup
-        .del(account._id, function (error, deleted) {
+        .del(servicegroup._id, function (error, deleted) {
           expect(error).to.exist;
           expect(error.status).to.exist;
           expect(error.message).to.be.equal('Not Found');
@@ -54,33 +73,33 @@ describe('ServiceGroup', function () {
 
   describe('instance delete', function () {
 
-    let account;
+    let servicegroup;
 
     before(function (done) {
-      const fake = ServiceGroup.fake();
-      fake
+      servicegroup = ServiceGroup.fake();
+      servicegroup
         .post(function (error, created) {
-          account = created;
+          servicegroup = created;
           done(error, created);
         });
     });
 
     it('should be able to delete', function (done) {
-      account
+      servicegroup
         .del(function (error, deleted) {
           expect(error).to.not.exist;
           expect(deleted).to.exist;
-          expect(deleted._id).to.eql(account._id);
+          expect(deleted._id).to.eql(servicegroup._id);
           done(error, deleted);
         });
     });
 
     it('should throw if not exists', function (done) {
-      account
+      servicegroup
         .del(function (error, deleted) {
           expect(error).to.not.exist;
           expect(deleted).to.exist;
-          expect(deleted._id).to.eql(account._id);
+          expect(deleted._id).to.eql(servicegroup._id);
           done();
         });
     });
@@ -89,6 +108,10 @@ describe('ServiceGroup', function () {
 
   after(function (done) {
     ServiceGroup.remove(done);
+  });
+
+  after(function (done) {
+    Jurisdiction.remove(done);
   });
 
 });

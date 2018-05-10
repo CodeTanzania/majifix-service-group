@@ -4,14 +4,24 @@
 const path = require('path');
 const _ = require('lodash');
 const async = require('async');
-const mongoose = require('mongoose');
 const { expect } = require('chai');
+const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
 describe('ServiceGroup', function () {
 
+  let jurisdiction;
+
   before(function (done) {
-    mongoose.connect('mongodb://localhost/majifix-servicegroup', done);
+    Jurisdiction.remove(done);
+  });
+
+  before(function (done) {
+    jurisdiction = Jurisdiction.fake();
+    jurisdiction.post(function (error, created) {
+      jurisdiction = created;
+      done(error, created);
+    });
   });
 
   before(function (done) {
@@ -23,12 +33,13 @@ describe('ServiceGroup', function () {
     let servicegroups;
 
     before(function (done) {
-      const fakes = _.map(ServiceGroup.fake(32), function (
-        servicegroup) {
-        return function (next) {
-          servicegroup.post(next);
-        };
-      });
+      const fakes =
+        _.map(ServiceGroup.fake(32), function (servicegroup) {
+          return function (next) {
+            servicegroup.jurisdiction = jurisdiction;
+            servicegroup.post(next);
+          };
+        });
       async
       .parallel(fakes, function (error, created) {
         servicegroups = created;
@@ -148,6 +159,10 @@ describe('ServiceGroup', function () {
 
   after(function (done) {
     ServiceGroup.remove(done);
+  });
+
+  after(function (done) {
+    Jurisdiction.remove(done);
   });
 
 });

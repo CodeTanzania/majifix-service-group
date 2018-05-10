@@ -2,15 +2,17 @@
 
 /* ensure mongo uri */
 process.env.MONGODB_URI =
-  (process.env.MONGODB_URI || 'mongodb://localhost/majifix-servicegroup');
+  (process.env.MONGODB_URI || 'mongodb://localhost/majifix-service-group');
 
 
 /* dependencies */
 const path = require('path');
+const _ = require('lodash');
 const async = require('async');
 const mongoose = require('mongoose');
+const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup, app, info } = require(path.join(__dirname, '..'));
-const samples = require('./samples')(20);
+let samples = require('./samples')(20);
 
 
 /* connect to mongoose */
@@ -22,12 +24,26 @@ function boot() {
   async.waterfall([
 
     function clear(next) {
-      ServiceGroup.remove(function ( /*error, results*/) {
+      ServiceGroup.remove(function ( /*error, results*/ ) {
         next();
       });
     },
 
-    function seed(next) {
+    function seedJurisdiction(next) {
+      const jurisdiction = Jurisdiction.fake();
+      Jurisdiction.remove(function ( /*error, results*/ ) {
+        jurisdiction.post(next);
+      });
+    },
+
+    function seed(jurisdiction, next) {
+      /* fake statuses */
+      samples = _.map(samples, function (sample, index) {
+        if ((index % 2 === 0)) {
+          sample.jurisdiction = jurisdiction;
+        }
+        return sample;
+      });
       /* fake servicegroups */
       ServiceGroup.create(samples, next);
     }
@@ -42,7 +58,9 @@ function boot() {
 
     /* fire the app */
     app.start(function (error, env) {
-      console.log(`visit http://0.0.0.0:${env.PORT}/v${info.version}/servicegroups`);
+      console.log(
+        `visit http://0.0.0.0:${env.PORT}/v${info.version}/servicegroups`
+      );
     });
 
   });

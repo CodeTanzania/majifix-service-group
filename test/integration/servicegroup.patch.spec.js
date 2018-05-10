@@ -2,14 +2,24 @@
 
 /* dependencies */
 const path = require('path');
-const mongoose = require('mongoose');
 const { expect } = require('chai');
+const { Jurisdiction } = require('majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
 describe('ServiceGroup', function () {
 
+  let jurisdiction;
+
   before(function (done) {
-    mongoose.connect('mongodb://localhost/majifix-servicegroup', done);
+    Jurisdiction.remove(done);
+  });
+
+  before(function (done) {
+    jurisdiction = Jurisdiction.fake();
+    jurisdiction.post(function (error, created) {
+      jurisdiction = created;
+      done(error, created);
+    });
   });
 
   before(function (done) {
@@ -21,8 +31,9 @@ describe('ServiceGroup', function () {
     let servicegroup;
 
     before(function (done) {
-      const fake = ServiceGroup.fake();
-      fake
+      servicegroup = ServiceGroup.fake();
+      servicegroup.jurisdiction = jurisdiction;
+      servicegroup
         .post(function (error, created) {
           servicegroup = created;
           done(error, created);
@@ -40,6 +51,13 @@ describe('ServiceGroup', function () {
           expect(updated).to.exist;
           expect(updated._id).to.eql(servicegroup._id);
           expect(updated.name.en).to.eql(servicegroup.name.en);
+
+          //assert jurisdiction
+          expect(updated.jurisdiction).to.exist;
+          expect(updated.jurisdiction.code)
+            .to.eql(servicegroup.jurisdiction.code);
+          expect(updated.jurisdiction.name)
+            .to.eql(servicegroup.jurisdiction.name);
           done(error, updated);
         });
     });
@@ -65,8 +83,8 @@ describe('ServiceGroup', function () {
     let servicegroup;
 
     before(function (done) {
-      const fake = ServiceGroup.fake();
-      fake
+      servicegroup = ServiceGroup.fake();
+      servicegroup
         .post(function (error, created) {
           servicegroup = created;
           done(error, created);
@@ -100,6 +118,10 @@ describe('ServiceGroup', function () {
 
   after(function (done) {
     ServiceGroup.remove(done);
+  });
+
+  after(function (done) {
+    Jurisdiction.remove(done);
   });
 
 });

@@ -3,19 +3,17 @@
 /* dependencies */
 const path = require('path');
 const request = require('supertest');
-const mongoose = require('mongoose');
 const { expect } = require('chai');
-const { ServiceGroup, app, info } = require(path.join(__dirname, '..', '..'));
+const {
+  ServiceGroup,
+  app,
+  info
+} = require(path.join(__dirname, '..', '..'));
 
 
 describe('ServiceGroup', function () {
 
   describe('Rest API', function () {
-
-    before(function (done) {
-      mongoose.connect('mongodb://localhost/majifix-servicegroup',
-        done);
-    });
 
     before(function (done) {
       ServiceGroup.remove(done);
@@ -101,7 +99,8 @@ describe('ServiceGroup', function () {
       const patch = servicegroup.fakeOnly('name');
 
       request(app)
-        .patch(`/v${info.version}/servicegroups/${servicegroup._id}`)
+        .patch(
+          `/v${info.version}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(patch)
@@ -152,7 +151,8 @@ describe('ServiceGroup', function () {
       done) {
 
       request(app)
-        .delete(`/v${info.version}/servicegroups/${servicegroup._id}`)
+        .delete(
+          `/v${info.version}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
