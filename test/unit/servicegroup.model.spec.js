@@ -33,5 +33,7 @@ describe('ServiceGroup', function () {
       expect(ServiceGroup.DEFAULT_LOCALE).to.exist;
       expect(ServiceGroup.DEFAULT_LOCALE).to.equal('en');
     });
+
   });
+
 });
