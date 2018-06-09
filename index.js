@@ -11,7 +11,7 @@
  * Commercial, Billing, Non-Commercial etc.
  *
  * @author Benson Maruchu <benmaruchu@gmail.com>
- * @author lally elias <lallyelias87@mail.com>
+ * @author lally elias <lallyelias87@gmail.com>
  * @since  0.1.0
  * @version 0.1.0
  * @license MIT

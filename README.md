@@ -1,29 +1,28 @@
-majifix-service-group
-====================
+# majifix-service-group
 
 [![Build Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service-group)
 [![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service-group/status.svg?style=flat-square)](https://david-dm.org/CodeTanzania/majifix-service-group)
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service-group/tree/develop)
 
-A representation of an entity that group service offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
+A representation of an entity that group services offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
 
 ## Requirements
 
-- [NodeJS v9.9.0+](https://nodejs.org)
+- [NodeJS v8.11.1+](https://nodejs.org)
 - [MongoDB v3.4.10+](https://www.mongodb.com/)
-- [Mongoose v5.0.14+](https://github.com/Automattic/mongoose)
+- [Mongoose v5.1.2+](https://github.com/Automattic/mongoose)
 
 ## Installation
 
 ```sh
-$ npm install majifix-service-group --save
+npm install @codetanzania/majifix-service-group --save
 ```
 
 ## Usage
 
 ```js
 const mongoose = require('mongoose');
-const { app } = require('majifix-service-group');
+const { app } = require('@codetanzania/majifix-service-group');
 
 //connect to mongodb
 mongoose.connect(process.env.MONGODB_URI);
@@ -36,21 +35,24 @@ app.start(function(error, env) {
 
 ## Testing
 
-* Clone this repository
+- Clone this repository
 
-* Install all development dependencies
+- Install all development dependencies
+
 ```sh
-$ npm install
+npm install
 ```
 
-* Run example
+- Run example
+
 ```sh
-$ npm run dev
+npm run dev
 ```
 
-* Then run test
+- Then run test
+
 ```sh
-$ npm test
+npm test
 ```
 
 ## Contribute

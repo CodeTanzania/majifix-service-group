@@ -27,7 +27,21 @@ describe('ServiceGroup', function () {
       expect(jurisdiction.type.name).to.be.equal('ObjectId');
       expect(jurisdiction.index).to.be.true;
       expect(jurisdiction.exists).to.be.true;
-      expect(jurisdiction.autoset).to.be.true;
+
+    });
+
+    it('should have priority field', function () {
+
+      const priority = ServiceGroup.schema.tree.priority;
+      const instance = ServiceGroup.schema.paths.priority.instance;
+
+      expect(instance).to.be.equal('ObjectID');
+      expect(priority).to.exist;
+      expect(priority).to.be.an('object');
+      expect(priority.type).to.be.a('function');
+      expect(priority.type.name).to.be.equal('ObjectId');
+      expect(priority.index).to.be.true;
+      expect(priority.exists).to.be.true;
 
     });
 
@@ -64,7 +78,8 @@ describe('ServiceGroup', function () {
       });
 
       it('should have type `en` locale field', function () {
-        const instance = ServiceGroup.schema.paths.name.schema.paths.en.instance;
+        const instance = ServiceGroup.schema.paths.name.schema.paths
+          .en.instance;
         const en = ServiceGroup.schema.tree.name.tree.en;
 
         expect(instance).to.be.equal('String');
@@ -95,7 +110,8 @@ describe('ServiceGroup', function () {
       });
 
       it('should have type `en` locale field', function () {
-        const instance = ServiceGroup.schema.paths.description.schema.paths.en.instance;
+        const instance = ServiceGroup.schema.paths.description.schema
+          .paths.en.instance;
         const en = ServiceGroup.schema.tree.description.tree.en;
 
         expect(instance).to.be.equal('String');
