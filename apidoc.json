@@ -1,0 +1,10 @@
+{
+  "name": "majifix-service-group",
+  "title": "majifix - Service Group",
+  "url": "https://majifix-service-group.herokuapp.com/v1",
+  "sampleUrl": "https://majifix-service-group.herokuapp.com/v1",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  }
+}
