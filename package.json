@@ -1,6 +1,6 @@
 {
   "name": "@codetanzania/majifix-service-group",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A representation of an entity that group services offered by a jurisdiction(s) into meaningful categories e.g Sanitation.",
   "main": "index.js",
   "scripts": {
@@ -51,7 +51,7 @@
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
     "mocha": "^5.2.0",
-    "mongoose": "^5.2.7",
+    "mongoose": "^5.2.8",
     "nodemon": "^1.18.3",
     "sinon": "^6.1.5",
     "sinon-chai": "^3.2.0",
@@ -61,15 +61,15 @@
   },
   "dependencies": {
     "@codetanzania/majifix-common": "^0.8.0",
-    "@codetanzania/majifix-jurisdiction": "^1.3.2",
-    "@codetanzania/majifix-priority": "^1.2.1",
+    "@codetanzania/majifix-jurisdiction": "^1.3.3",
+    "@codetanzania/majifix-priority": "^1.3.0",
     "@lykmapipo/express-common": "^0.6.0",
     "async": "^2.6.1",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "mongoose-locale-schema": "^0.2.0",
-    "mongoose-rest-actions": "^0.15.4",
+    "mongoose-rest-actions": "^0.15.5",
     "randomcolor": "^0.5.3"
   },
   "engines": {
