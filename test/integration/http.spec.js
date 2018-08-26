@@ -4,7 +4,11 @@
 const path = require('path');
 const request = require('supertest');
 const { expect } = require('chai');
-const { ServiceGroup, router, app } = require(path.join(__dirname, '..', '..'));
+const {
+  ServiceGroup,
+  apiVersion,
+  app
+} = require(path.join(__dirname, '..', '..'));
 
 
 describe('ServiceGroup', function () {
@@ -22,7 +26,7 @@ describe('ServiceGroup', function () {
       servicegroup = ServiceGroup.fake();
 
       request(app)
-        .post(`/v${router.apiVersion}/servicegroups`)
+        .post(`/v${apiVersion}/servicegroups`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(servicegroup)
@@ -46,7 +50,7 @@ describe('ServiceGroup', function () {
     it('should handle HTTP GET on /servicegroups', function (done) {
 
       request(app)
-        .get(`/v${router.apiVersion}/servicegroups`)
+        .get(`/v${apiVersion}/servicegroups`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
@@ -72,7 +76,9 @@ describe('ServiceGroup', function () {
     it('should handle HTTP GET on /servicegroups/id:', function (done) {
 
       request(app)
-        .get(`/v${router.apiVersion}/servicegroups/${servicegroup._id}`)
+        .get(
+          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+        )
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
@@ -96,7 +102,8 @@ describe('ServiceGroup', function () {
 
       request(app)
         .patch(
-          `/v${router.apiVersion}/servicegroups/${servicegroup._id}`)
+          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+        )
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(patch)
@@ -122,7 +129,9 @@ describe('ServiceGroup', function () {
       const put = servicegroup.fakeOnly('name');
 
       request(app)
-        .put(`/v${router.apiVersion}/servicegroups/${servicegroup._id}`)
+        .put(
+          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+        )
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(put)
@@ -148,7 +157,8 @@ describe('ServiceGroup', function () {
 
       request(app)
         .delete(
-          `/v${router.apiVersion}/servicegroups/${servicegroup._id}`)
+          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+        )
         .set('Accept', 'application/json')
         .expect(200)
         .end(function (error, response) {
