@@ -1,4 +1,8 @@
-# v1.4.0 / 2018-08-26
+# 1.2.1 / 09-09-2018
+- force latest dependencies
+- run security audit fix
+
+# v1.2.0 / 2018-08-26
 - Force latest dependencies
 - Export apiVersion module level
 
