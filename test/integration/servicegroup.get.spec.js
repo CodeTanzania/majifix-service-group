@@ -13,7 +13,7 @@ describe('ServiceGroup', function () {
   let jurisdiction;
 
   before(function (done) {
-    Jurisdiction.remove(done);
+    Jurisdiction.deleteMany(done);
   });
 
   before(function (done) {
@@ -25,7 +25,7 @@ describe('ServiceGroup', function () {
   });
 
   before(function (done) {
-    ServiceGroup.remove(done);
+    ServiceGroup.deleteMany(done);
   });
 
   describe('get', function () {
@@ -158,11 +158,11 @@ describe('ServiceGroup', function () {
   });
 
   after(function (done) {
-    ServiceGroup.remove(done);
+    ServiceGroup.deleteMany(done);
   });
 
   after(function (done) {
-    Jurisdiction.remove(done);
+    Jurisdiction.deleteMany(done);
   });
 
 });
