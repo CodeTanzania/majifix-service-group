@@ -16,7 +16,7 @@ describe('ServiceGroup', function () {
   describe('Rest API', function () {
 
     before(function (done) {
-      ServiceGroup.remove(done);
+      ServiceGroup.deleteMany(done);
     });
 
     let servicegroup;
@@ -179,7 +179,7 @@ describe('ServiceGroup', function () {
 
 
     after(function (done) {
-      ServiceGroup.remove(done);
+      ServiceGroup.deleteMany(done);
     });
 
   });
