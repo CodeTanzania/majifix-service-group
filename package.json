@@ -53,6 +53,7 @@
     "express": ">=4.16.4",
     "lodash": ">=4.17.11",
     "moment": ">=2.24.0",
+    "mongoose": "^5.5.0",
     "mongoose-geojson-schemas": ">=0.10.1",
     "mongoose-locale-schema": ">=0.2.1",
     "mongoose-rest-actions": ">=0.24.0",
