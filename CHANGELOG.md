@@ -1,3 +1,10 @@
+#### 1.2.5 (2019-04-11)
+
+##### Chores
+
+- update package version to 1.2.5 ([c7cbf5fd](https://github.com/CodeTanzania/majifix-service-group/commit/c7cbf5fda8f601659c57509f61625718fb178b68))
+- update majifix-jurisdiction package ([0cac4eef](https://github.com/CodeTanzania/majifix-service-group/commit/0cac4eefd7fe347a3016a20df0eea44f5e8da640))
+
 #### 1.2.4 (2019-04-11)
 
 ##### Chores
