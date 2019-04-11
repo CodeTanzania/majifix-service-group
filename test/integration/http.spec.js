@@ -26,7 +26,7 @@ describe('ServiceGroup', function () {
       servicegroup = ServiceGroup.fake();
 
       request(app)
-        .post(`/v${apiVersion}/servicegroups`)
+        .post(`/${apiVersion}/servicegroups`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(servicegroup)
@@ -50,7 +50,7 @@ describe('ServiceGroup', function () {
     it('should handle HTTP GET on /servicegroups', function (done) {
 
       request(app)
-        .get(`/v${apiVersion}/servicegroups`)
+        .get(`/${apiVersion}/servicegroups`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
@@ -77,7 +77,7 @@ describe('ServiceGroup', function () {
 
       request(app)
         .get(
-          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+          `/${apiVersion}/servicegroups/${servicegroup._id}`
         )
         .set('Accept', 'application/json')
         .expect(200)
@@ -102,7 +102,7 @@ describe('ServiceGroup', function () {
 
       request(app)
         .patch(
-          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+          `/${apiVersion}/servicegroups/${servicegroup._id}`
         )
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ describe('ServiceGroup', function () {
 
       request(app)
         .put(
-          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+          `/${apiVersion}/servicegroups/${servicegroup._id}`
         )
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
@@ -157,7 +157,7 @@ describe('ServiceGroup', function () {
 
       request(app)
         .delete(
-          `/v${apiVersion}/servicegroups/${servicegroup._id}`
+          `/${apiVersion}/servicegroups/${servicegroup._id}`
         )
         .set('Accept', 'application/json')
         .expect(200)
