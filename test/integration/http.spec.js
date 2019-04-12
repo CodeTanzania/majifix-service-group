@@ -11,17 +11,17 @@ const {
 } = require(path.join(__dirname, '..', '..'));
 
 
-describe('ServiceGroup', function () {
+describe('ServiceGroup', () => {
 
-  describe('Rest API', function () {
+  describe('Rest API', () => {
 
-    before(function (done) {
+    before(done => {
       ServiceGroup.deleteMany(done);
     });
 
     let servicegroup;
 
-    it('should handle HTTP POST on /servicegroups', function (done) {
+    it('should handle HTTP POST on /servicegroups', done => {
 
       servicegroup = ServiceGroup.fake();
 
@@ -31,7 +31,7 @@ describe('ServiceGroup', function () {
         .set('Content-Type', 'application/json')
         .send(servicegroup)
         .expect(201)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -47,14 +47,14 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should handle HTTP GET on /servicegroups', function (done) {
+    it('should handle HTTP GET on /servicegroups', done => {
 
       request(app)
         .get(`/${apiVersion}/servicegroups`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -73,7 +73,7 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should handle HTTP GET on /servicegroups/id:', function (done) {
+    it('should handle HTTP GET on /servicegroups/id:', done => {
 
       request(app)
         .get(
@@ -81,7 +81,7 @@ describe('ServiceGroup', function () {
         )
         .set('Accept', 'application/json')
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -96,7 +96,7 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should handle HTTP PATCH on /servicegroups/id:', function (done) {
+    it('should handle HTTP PATCH on /servicegroups/id:', done => {
 
       const patch = servicegroup.fakeOnly('name');
 
@@ -108,7 +108,7 @@ describe('ServiceGroup', function () {
         .set('Content-Type', 'application/json')
         .send(patch)
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -124,7 +124,7 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should handle HTTP PUT on /servicegroups/id:', function (done) {
+    it('should handle HTTP PUT on /servicegroups/id:', done => {
 
       const put = servicegroup.fakeOnly('name');
 
@@ -136,7 +136,7 @@ describe('ServiceGroup', function () {
         .set('Content-Type', 'application/json')
         .send(put)
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -161,7 +161,7 @@ describe('ServiceGroup', function () {
         )
         .set('Accept', 'application/json')
         .expect(200)
-        .end(function (error, response) {
+        .end((error, response) => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
@@ -178,7 +178,7 @@ describe('ServiceGroup', function () {
     });
 
 
-    after(function (done) {
+    after(done => {
       ServiceGroup.deleteMany(done);
     });
 

@@ -7,58 +7,58 @@ const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { Priority } = require('@codetanzania/majifix-priority');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
-describe('ServiceGroup', function () {
+describe('ServiceGroup', () => {
 
   let jurisdiction;
   let priority;
 
-  before(function (done) {
+  before(done => {
     Priority.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     Jurisdiction.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     jurisdiction = Jurisdiction.fake();
-    jurisdiction.post(function (error, created) {
+    jurisdiction.post((error, created) => {
       jurisdiction = created;
       done(error, created);
     });
   });
 
-  before(function (done) {
+  before(done => {
     priority = Priority.fake();
-    priority.post(function (error, created) {
+    priority.post((error, created) => {
       priority = created;
       done(error, created);
     });
   });
 
 
-  before(function (done) {
+  before(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  describe('static delete', function () {
+  describe('static delete', () => {
 
     let servicegroup;
 
-    before(function (done) {
+    before(done => {
       servicegroup = ServiceGroup.fake();
       servicegroup.jurisdiction = jurisdiction;
       servicegroup.priority = priority;
       servicegroup
-        .post(function (error, created) {
+        .post((error, created) => {
           servicegroup = created;
           done(error, created);
         });
     });
 
-    it('should be able to delete', function (done) {
+    it('should be able to delete', done => {
       ServiceGroup
-        .del(servicegroup._id, function (error, deleted) {
+        .del(servicegroup._id, (error, deleted) => {
           expect(error).to.not.exist;
           expect(deleted).to.exist;
           expect(deleted._id).to.eql(servicegroup._id);
@@ -73,9 +73,9 @@ describe('ServiceGroup', function () {
         });
     });
 
-    it('should throw if not exists', function (done) {
+    it('should throw if not exists', done => {
       ServiceGroup
-        .del(servicegroup._id, function (error, deleted) {
+        .del(servicegroup._id, (error, deleted) => {
           expect(error).to.exist;
           expect(error.status).to.exist;
           expect(error.message).to.be.equal('Not Found');
@@ -86,22 +86,22 @@ describe('ServiceGroup', function () {
 
   });
 
-  describe('instance delete', function () {
+  describe('instance delete', () => {
 
     let servicegroup;
 
-    before(function (done) {
+    before(done => {
       servicegroup = ServiceGroup.fake();
       servicegroup
-        .post(function (error, created) {
+        .post((error, created) => {
           servicegroup = created;
           done(error, created);
         });
     });
 
-    it('should be able to delete', function (done) {
+    it('should be able to delete', done => {
       servicegroup
-        .del(function (error, deleted) {
+        .del((error, deleted) => {
           expect(error).to.not.exist;
           expect(deleted).to.exist;
           expect(deleted._id).to.eql(servicegroup._id);
@@ -109,9 +109,9 @@ describe('ServiceGroup', function () {
         });
     });
 
-    it('should throw if not exists', function (done) {
+    it('should throw if not exists', done => {
       servicegroup
-        .del(function (error, deleted) {
+        .del((error, deleted) => {
           expect(error).to.not.exist;
           expect(deleted).to.exist;
           expect(deleted._id).to.eql(servicegroup._id);
@@ -121,15 +121,15 @@ describe('ServiceGroup', function () {
 
   });
 
-  after(function (done) {
+  after(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Priority.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Jurisdiction.deleteMany(done);
   });
 
