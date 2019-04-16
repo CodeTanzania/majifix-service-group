@@ -6,37 +6,37 @@ const { expect } = require('chai');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
-describe('ServiceGroup', function () {
+describe('ServiceGroup', () => {
 
   let jurisdiction;
 
-  before(function (done) {
+  before(done => {
     Jurisdiction.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     jurisdiction = Jurisdiction.fake();
-    jurisdiction.post(function (error, created) {
+    jurisdiction.post((error, created) => {
       jurisdiction = created;
       done(error, created);
     });
   });
 
-  before(function (done) {
+  before(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  describe('static post', function () {
+  describe('static post', () => {
 
     let servicegroup;
 
-    it('should be able to post', function (done) {
+    it('should be able to post', done => {
 
       servicegroup = ServiceGroup.fake();
       servicegroup.jurisdiction = jurisdiction;
 
       ServiceGroup
-        .post(servicegroup, function (error, created) {
+        .post(servicegroup, (error, created) => {
           expect(error).to.not.exist;
           expect(created).to.exist;
           expect(created._id).to.eql(servicegroup._id);
@@ -55,16 +55,16 @@ describe('ServiceGroup', function () {
 
   });
 
-  describe('instance post', function () {
+  describe('instance post', () => {
 
     let servicegroup;
 
-    it('should be able to post', function (done) {
+    it('should be able to post', done => {
 
       servicegroup = ServiceGroup.fake();
 
       servicegroup
-        .post(function (error, created) {
+        .post((error, created) => {
           expect(error).to.not.exist;
           expect(created).to.exist;
           expect(created._id).to.eql(servicegroup._id);
@@ -76,11 +76,11 @@ describe('ServiceGroup', function () {
 
   });
 
-  after(function (done) {
+  after(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Jurisdiction.deleteMany(done);
   });
 

@@ -11,16 +11,16 @@ const ServiceGroup =
   require(path.join(__dirname, '..', '..', 'lib', 'servicegroup.model'));
 
 
-describe('ServiceGroup', function () {
+describe('ServiceGroup', () => {
 
-  describe('Statics', function () {
+  describe('Statics', () => {
 
-    it('should expose model name as constant', function () {
+    it('should expose model name as constant', () => {
       expect(ServiceGroup.MODEL_NAME).to.exist;
       expect(ServiceGroup.MODEL_NAME).to.be.equal('ServiceGroup');
     });
 
-    it('should expose autopulate as options', function () {
+    it('should expose autopulate as options', () => {
       expect(ServiceGroup.OPTION_AUTOPOPULATE).to.exist;
       expect(ServiceGroup.OPTION_AUTOPOPULATE)
         .to.be.eql({
@@ -29,7 +29,7 @@ describe('ServiceGroup', function () {
         });
     });
 
-    it('should expose default locale `en` when not set', function () {
+    it('should expose default locale `en` when not set', () => {
       expect(ServiceGroup.DEFAULT_LOCALE).to.exist;
       expect(ServiceGroup.DEFAULT_LOCALE).to.equal('en');
     });
