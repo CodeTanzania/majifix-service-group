@@ -45,8 +45,7 @@ describe('ServiceGroup', () => {
       servicegroup = servicegroup.fakeOnly('name');
 
       ServiceGroup
-        .put(servicegroup._id, servicegroup, function (error,
-          updated) {
+        .put(servicegroup._id, servicegroup, (error,updated) => {
           expect(error).to.not.exist;
           expect(updated).to.exist;
           expect(updated._id).to.eql(servicegroup._id);
