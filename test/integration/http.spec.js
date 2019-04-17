@@ -152,8 +152,7 @@ describe('ServiceGroup', () => {
 
     });
 
-    it('should handle HTTP DELETE on /servicegroups/:id', function (
-      done) {
+    it('should handle HTTP DELETE on /servicegroups/:id',  done => {
 
       request(app)
         .delete(
