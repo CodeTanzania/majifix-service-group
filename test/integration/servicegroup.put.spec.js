@@ -2,6 +2,7 @@
 
 /* dependencies */
 const path = require('path');
+const _ = require('lodash');
 const { expect } = require('chai');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
@@ -45,7 +46,7 @@ describe('ServiceGroup', () => {
       servicegroup = servicegroup.fakeOnly('name');
 
       ServiceGroup
-        .put(servicegroup._id, servicegroup, (error,updated) => {
+        .put(servicegroup._id, servicegroup, (error, updated) => {
           expect(error).to.not.exist;
           expect(updated).to.exist;
           expect(updated._id).to.eql(servicegroup._id);
@@ -63,13 +64,13 @@ describe('ServiceGroup', () => {
 
     it('should throw if not exists', done => {
 
-      const fake = ServiceGroup.fake();
+      const fake = ServiceGroup.fake().toObject();
 
       ServiceGroup
-        .put(fake._id, fake, (error, updated) => {
+        .put(fake._id, _.omit(fake, '_id'), (error, updated) => {
           expect(error).to.exist;
-          expect(error.status).to.exist;
-          expect(error.message).to.be.equal('Not Found');
+          // expect(error.status).to.exist;
+          expect(error.name).to.be.equal('DocumentNotFoundError');
           expect(updated).to.not.exist;
           done();
         });
