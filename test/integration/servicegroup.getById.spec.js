@@ -7,44 +7,44 @@ const { expect } = require('chai');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require(path.join(__dirname, '..', '..'));
 
-describe('ServiceGroup', function () {
+describe('ServiceGroup', () => {
 
   let jurisdiction;
 
-  before(function (done) {
+  before(done => {
     Jurisdiction.deleteMany(done);
   });
 
-  before(function (done) {
+  before(done => {
     jurisdiction = Jurisdiction.fake();
-    jurisdiction.post(function (error, created) {
+    jurisdiction.post((error, created) => {
       jurisdiction = created;
       done(error, created);
     });
   });
 
 
-  before(function (done) {
+  before(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  describe('get by id', function () {
+  describe('get by id', () => {
 
     let servicegroup;
 
-    before(function (done) {
+    before(done => {
       servicegroup = ServiceGroup.fake();
       servicegroup.jurisdiction = jurisdiction;
       servicegroup
-        .post(function (error, created) {
+        .post((error, created) => {
           servicegroup = created;
           done(error, created);
         });
     });
 
-    it('should be able to get an instance', function (done) {
+    it('should be able to get an instance', done => {
       ServiceGroup
-        .getById(servicegroup._id, function (error, found) {
+        .getById(servicegroup._id, (error, found) => {
           expect(error).to.not.exist;
           expect(found).to.exist;
           expect(found._id).to.eql(servicegroup._id);
@@ -59,7 +59,7 @@ describe('ServiceGroup', function () {
         });
     });
 
-    it('should be able to get with options', function (done) {
+    it('should be able to get with options', done => {
 
       const options = {
         _id: servicegroup._id,
@@ -67,7 +67,7 @@ describe('ServiceGroup', function () {
       };
 
       ServiceGroup
-        .getById(options, function (error, found) {
+        .getById(options, (error, found) => {
           expect(error).to.not.exist;
           expect(found).to.exist;
           expect(found._id).to.eql(servicegroup._id);
@@ -82,7 +82,7 @@ describe('ServiceGroup', function () {
             'color',
             'createdAt',
             'updatedAt'
-          ], function (field) {
+          ], field => {
             expect(fields).to.not.include(field);
           });
 
@@ -92,14 +92,14 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should throw if not exists', function (done) {
+    it('should throw if not exists', done => {
       const servicegroup = ServiceGroup.fake();
 
       ServiceGroup
-        .getById(servicegroup._id, function (error, found) {
+        .getById(servicegroup._id, (error, found) => {
           expect(error).to.exist;
-          expect(error.status).to.exist;
-          expect(error.message).to.be.equal('Not Found');
+          // expect(error.status).to.exist;
+          expect(error.name).to.be.equal('DocumentNotFoundError');
           expect(found).to.not.exist;
           done();
         });
@@ -107,11 +107,11 @@ describe('ServiceGroup', function () {
 
   });
 
-  after(function (done) {
+  after(done => {
     ServiceGroup.deleteMany(done);
   });
 
-  after(function (done) {
+  after(done => {
     Jurisdiction.deleteMany(done);
   });
 

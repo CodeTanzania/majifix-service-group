@@ -1,3 +1,21 @@
+#### 1.2.6 (2019-05-21)
+
+##### Chores
+
+- **deps:** force latest version & audit fix ([a36e774e](https://github.com/CodeTanzania/majifix-service-group/commit/a36e774e9d0eb651c886b346889b221fa4d81e3c))
+- update dependencies ([585d9392](https://github.com/CodeTanzania/majifix-service-group/commit/585d939211d231900fc3a5ebc9b7f771c02ea23a))
+- update dependencies ([7b634364](https://github.com/CodeTanzania/majifix-service-group/commit/7b63436478e7805a80b6eae9cebdc79e0c7c0208))
+
+##### Bug Fixes
+
+- update examples to use latest dependencies api ([b63c8f21](https://github.com/CodeTanzania/majifix-service-group/commit/b63c8f211b1e2332840a027199d7a571c00345d3))
+
+##### Refactors
+
+- migrate to use latest dependencies api ([2774e7d7](https://github.com/CodeTanzania/majifix-service-group/commit/2774e7d7d62938e0efa0349061c778e826a0eb7c))
+- add arrow functions ([5d013078](https://github.com/CodeTanzania/majifix-service-group/commit/5d0130785a84329a154abffe4f9964d54ecde186))
+- use of arrow functions ([5fc680ab](https://github.com/CodeTanzania/majifix-service-group/commit/5fc680ab9727d0db7c8257377f23d18bdd23bde7))
+
 #### 1.2.5 (2019-04-11)
 
 ##### Chores

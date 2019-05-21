@@ -11,6 +11,7 @@ const _ = require('lodash');
 const async = require('async');
 const mongoose = require('mongoose');
 // mongoose.set('debug', true);
+const { start } = require('@lykmapipo/express-common');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const {
   ServiceGroup,
@@ -67,9 +68,9 @@ function boot() {
     });
 
     /* fire the app */
-    app.start(function (error, env) {
+    start(function (error, env) {
       console.log(
-        `visit http://0.0.0.0:${env.PORT}/v${apiVersion}/servicegroups`
+        `visit http://0.0.0.0:${env.PORT}/${apiVersion}/servicegroups`
       );
     });
 

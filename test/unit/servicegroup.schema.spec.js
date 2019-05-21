@@ -11,11 +11,11 @@ const ServiceGroup =
   require(path.join(__dirname, '..', '..', 'lib', 'servicegroup.model'));
 
 
-describe('ServiceGroup', function () {
+describe('ServiceGroup', () => {
 
-  describe('Schema', function () {
+  describe('Schema', () => {
 
-    it('should have jurisdiction field', function () {
+    it('should have jurisdiction field', () => {
 
       const jurisdiction = ServiceGroup.schema.tree.jurisdiction;
       const instance = ServiceGroup.schema.paths.jurisdiction.instance;
@@ -30,7 +30,7 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should have priority field', function () {
+    it('should have priority field', () => {
 
       const priority = ServiceGroup.schema.tree.priority;
       const instance = ServiceGroup.schema.paths.priority.instance;
@@ -45,7 +45,7 @@ describe('ServiceGroup', function () {
 
     });
 
-    it('should have code field', function () {
+    it('should have code field', () => {
 
       const code = ServiceGroup.schema.tree.code;
       const instance = ServiceGroup.schema.paths.code.instance;
@@ -63,9 +63,9 @@ describe('ServiceGroup', function () {
 
     });
 
-    describe('name', function () {
+    describe('name', () => {
 
-      it('should be an embedded sub-document', function () {
+      it('should be an embedded sub-document', () => {
         const name = ServiceGroup.schema.tree.name;
         const instance = ServiceGroup.schema.paths.name.instance;
         const tree = ServiceGroup.schema.tree.name.tree;
@@ -77,7 +77,7 @@ describe('ServiceGroup', function () {
         expect(tree.en).to.exist;
       });
 
-      it('should have type `en` locale field', function () {
+      it('should have type `en` locale field', () => {
         const instance = ServiceGroup.schema.paths.name.schema.paths
           .en.instance;
         const en = ServiceGroup.schema.tree.name.tree.en;
@@ -96,8 +96,8 @@ describe('ServiceGroup', function () {
       });
     });
 
-    describe('description', function () {
-      it('should be an embedded sub-document', function () {
+    describe('description', () => {
+      it('should be an embedded sub-document', () => {
         const description = ServiceGroup.schema.tree.description;
         const instance = ServiceGroup.schema.paths.description.instance;
         const tree = ServiceGroup.schema.tree.description.tree;
@@ -109,7 +109,7 @@ describe('ServiceGroup', function () {
         expect(tree.en).to.exist;
       });
 
-      it('should have type `en` locale field', function () {
+      it('should have type `en` locale field', () => {
         const instance = ServiceGroup.schema.paths.description.schema
           .paths.en.instance;
         const en = ServiceGroup.schema.tree.description.tree.en;
@@ -126,7 +126,7 @@ describe('ServiceGroup', function () {
       });
     });
 
-    it('should have color field', function () {
+    it('should have color field', () => {
 
       const color = ServiceGroup.schema.tree.color;
       const instance = ServiceGroup.schema.paths.color.instance;
