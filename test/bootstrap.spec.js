@@ -1,13 +1,4 @@
-'use strict';
+import '@lykmapipo/mongoose-test-helpers';
 
-/* force environment to be test */
+/* set environment variables */
 process.env.NODE_ENV = 'test';
-
-/* setup mongoose */
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-
-/* setup */
-require('chai').use(require('sinon-chai'));
-require('sinon');
-require('sinon-mongoose');
