@@ -1,24 +1,14 @@
-'use strict';
-
-
 /* dependencies */
-const path = require('path');
-const { expect } = require('chai');
-
+import { expect } from 'chai';
 
 /* declarations */
-const ServiceGroup =
-  require(path.join(__dirname, '..', '..', 'lib', 'servicegroup.model'));
-
+import ServiceGroup from '../../src/servicegroup.model';
 
 describe('ServiceGroup', () => {
-
   describe('Schema', () => {
-
     it('should have jurisdiction field', () => {
-
-      const jurisdiction = ServiceGroup.schema.tree.jurisdiction;
-      const instance = ServiceGroup.schema.paths.jurisdiction.instance;
+      const { jurisdiction } = ServiceGroup.schema.tree;
+      const { instance } = ServiceGroup.schema.paths.jurisdiction;
 
       expect(instance).to.be.equal('ObjectID');
       expect(jurisdiction).to.exist;
@@ -27,13 +17,11 @@ describe('ServiceGroup', () => {
       expect(jurisdiction.type.name).to.be.equal('ObjectId');
       expect(jurisdiction.index).to.be.true;
       expect(jurisdiction.exists).to.be.true;
-
     });
 
     it('should have priority field', () => {
-
-      const priority = ServiceGroup.schema.tree.priority;
-      const instance = ServiceGroup.schema.paths.priority.instance;
+      const { priority } = ServiceGroup.schema.tree;
+      const { instance } = ServiceGroup.schema.paths.priority;
 
       expect(instance).to.be.equal('ObjectID');
       expect(priority).to.exist;
@@ -42,13 +30,11 @@ describe('ServiceGroup', () => {
       expect(priority.type.name).to.be.equal('ObjectId');
       expect(priority.index).to.be.true;
       expect(priority.exists).to.be.true;
-
     });
 
     it('should have code field', () => {
-
-      const code = ServiceGroup.schema.tree.code;
-      const instance = ServiceGroup.schema.paths.code.instance;
+      const { code } = ServiceGroup.schema.tree;
+      const { instance } = ServiceGroup.schema.paths.code;
 
       expect(instance).to.be.equal('String');
       expect(code).to.exist;
@@ -60,15 +46,13 @@ describe('ServiceGroup', () => {
       expect(code.trim).to.be.true;
       expect(code.index).to.be.true;
       expect(code.searchable).to.be.true;
-
     });
 
     describe('name', () => {
-
       it('should be an embedded sub-document', () => {
-        const name = ServiceGroup.schema.tree.name;
-        const instance = ServiceGroup.schema.paths.name.instance;
-        const tree = ServiceGroup.schema.tree.name.tree;
+        const { name } = ServiceGroup.schema.tree;
+        const { instance } = ServiceGroup.schema.paths.name;
+        const { tree } = ServiceGroup.schema.tree.name;
 
         expect(instance).to.be.equal('Embedded');
         expect(name).to.exist;
@@ -78,9 +62,8 @@ describe('ServiceGroup', () => {
       });
 
       it('should have type `en` locale field', () => {
-        const instance = ServiceGroup.schema.paths.name.schema.paths
-          .en.instance;
-        const en = ServiceGroup.schema.tree.name.tree.en;
+        const { instance } = ServiceGroup.schema.paths.name.schema.paths.en;
+        const { en } = ServiceGroup.schema.tree.name.tree;
 
         expect(instance).to.be.equal('String');
         expect(en).to.exist;
@@ -92,15 +75,14 @@ describe('ServiceGroup', () => {
         expect(en.index).to.be.true;
         expect(en.required).to.be.true;
         expect(en.searchable).to.be.true;
-
       });
     });
 
     describe('description', () => {
       it('should be an embedded sub-document', () => {
-        const description = ServiceGroup.schema.tree.description;
-        const instance = ServiceGroup.schema.paths.description.instance;
-        const tree = ServiceGroup.schema.tree.description.tree;
+        const { description } = ServiceGroup.schema.tree;
+        const { instance } = ServiceGroup.schema.paths.description;
+        const { tree } = ServiceGroup.schema.tree.description;
 
         expect(instance).to.be.equal('Embedded');
         expect(description).to.exist;
@@ -110,9 +92,10 @@ describe('ServiceGroup', () => {
       });
 
       it('should have type `en` locale field', () => {
-        const instance = ServiceGroup.schema.paths.description.schema
-          .paths.en.instance;
-        const en = ServiceGroup.schema.tree.description.tree.en;
+        const {
+          instance,
+        } = ServiceGroup.schema.paths.description.schema.paths.en;
+        const { en } = ServiceGroup.schema.tree.description.tree;
 
         expect(instance).to.be.equal('String');
         expect(en).to.exist;
@@ -122,14 +105,12 @@ describe('ServiceGroup', () => {
         expect(en.trim).to.be.true;
         expect(en.index).to.be.true;
         expect(en.searchable).to.be.true;
-
       });
     });
 
     it('should have color field', () => {
-
-      const color = ServiceGroup.schema.tree.color;
-      const instance = ServiceGroup.schema.paths.color.instance;
+      const { color } = ServiceGroup.schema.tree;
+      const { instance } = ServiceGroup.schema.paths.color;
 
       expect(instance).to.be.equal('String');
       expect(color).to.exist;
@@ -138,9 +119,6 @@ describe('ServiceGroup', () => {
       expect(color.type.name).to.be.equal('String');
       expect(color.trim).to.be.true;
       expect(color.default).to.be.exist;
-
     });
-
   });
-
 });
