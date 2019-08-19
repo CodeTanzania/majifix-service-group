@@ -1,28 +1,16 @@
-'use strict';
-
-/* dependencies */
-const path = require('path');
-const request = require('supertest');
-const { expect } = require('chai');
-const {
-  ServiceGroup,
-  apiVersion,
-  app
-} = require(path.join(__dirname, '..', '..'));
-
+import request from 'supertest';
+import { app, mount } from '@lykmapipo/express-common';
+import { clear, expect } from '@lykmapipo/mongoose-test-helpers';
+import { ServiceGroup, apiVersion, router } from '../../src';
 
 describe('ServiceGroup', () => {
-
+  mount(router);
   describe('Rest API', () => {
-
-    before(done => {
-      ServiceGroup.deleteMany(done);
-    });
-
     let servicegroup;
 
-    it('should handle HTTP POST on /servicegroups', done => {
+    before(done => clear(ServiceGroup, done));
 
+    it('should handle HTTP POST on /servicegroups', done => {
       servicegroup = ServiceGroup.fake();
 
       request(app)
@@ -42,13 +30,10 @@ describe('ServiceGroup', () => {
           expect(created.name).to.exist;
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP GET on /servicegroups', done => {
-
       request(app)
         .get(`/${apiVersion}/servicegroups`)
         .set('Accept', 'application/json')
@@ -58,7 +43,7 @@ describe('ServiceGroup', () => {
           expect(error).to.not.exist;
           expect(response).to.exist;
 
-          //assert payload
+          // assert payload
           const result = response.body;
           expect(result.data).to.exist;
           expect(result.total).to.exist;
@@ -68,17 +53,12 @@ describe('ServiceGroup', () => {
           expect(result.pages).to.exist;
           expect(result.lastModified).to.exist;
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP GET on /servicegroups/id:', done => {
-
       request(app)
-        .get(
-          `/${apiVersion}/servicegroups/${servicegroup._id}`
-        )
+        .get(`/${apiVersion}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end((error, response) => {
@@ -91,19 +71,14 @@ describe('ServiceGroup', () => {
           expect(found.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP PATCH on /servicegroups/id:', done => {
-
       const patch = servicegroup.fakeOnly('name');
 
       request(app)
-        .patch(
-          `/${apiVersion}/servicegroups/${servicegroup._id}`
-        )
+        .patch(`/${apiVersion}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(patch)
@@ -119,19 +94,14 @@ describe('ServiceGroup', () => {
           expect(patched.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
-
         });
-
     });
 
     it('should handle HTTP PUT on /servicegroups/id:', done => {
-
       const put = servicegroup.fakeOnly('name');
 
       request(app)
-        .put(
-          `/${apiVersion}/servicegroups/${servicegroup._id}`
-        )
+        .put(`/${apiVersion}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .send(put)
@@ -147,17 +117,12 @@ describe('ServiceGroup', () => {
           expect(updated.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
-
         });
-
     });
 
-    it('should handle HTTP DELETE on /servicegroups/:id',  done => {
-
+    it('should handle HTTP DELETE on /servicegroups/:id', done => {
       request(app)
-        .delete(
-          `/${apiVersion}/servicegroups/${servicegroup._id}`
-        )
+        .delete(`/${apiVersion}/servicegroups/${servicegroup._id}`)
         .set('Accept', 'application/json')
         .expect(200)
         .end((error, response) => {
@@ -171,16 +136,9 @@ describe('ServiceGroup', () => {
           expect(deleted.name.en).to.be.equal(servicegroup.name.en);
 
           done(error, response);
-
         });
-
     });
 
-
-    after(done => {
-      ServiceGroup.deleteMany(done);
-    });
-
+    after(done => clear('ServiceGroup', done));
   });
-
 });
