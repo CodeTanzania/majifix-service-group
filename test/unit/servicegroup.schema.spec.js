@@ -1,7 +1,5 @@
-/* dependencies */
-import { expect } from 'chai';
-
-/* declarations */
+import { SchemaTypes } from '@lykmapipo/mongoose-common';
+import { expect } from '@lykmapipo/mongoose-test-helpers';
 import ServiceGroup from '../../src/servicegroup.model';
 
 describe('ServiceGroup', () => {
@@ -119,6 +117,20 @@ describe('ServiceGroup', () => {
       expect(color.type.name).to.be.equal('String');
       expect(color.trim).to.be.true;
       expect(color.default).to.be.exist;
+    });
+
+    it('should have default field', () => {
+      const isDefault = ServiceGroup.path('default');
+
+      expect(isDefault).to.exist;
+      expect(isDefault).to.be.instanceof(SchemaTypes.Boolean);
+      expect(isDefault.options).to.exist;
+      expect(isDefault.options).to.be.an('object');
+      expect(isDefault.options.type).to.exist;
+      expect(isDefault.options.index).to.be.true;
+      expect(isDefault.options.exportable).to.be.true;
+      expect(isDefault.options.default).to.be.false;
+      expect(isDefault.options.fake).to.exist;
     });
   });
 });

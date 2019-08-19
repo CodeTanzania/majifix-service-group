@@ -1,7 +1,4 @@
-/* dependencies */
-import { expect } from 'chai';
-
-/* declarations */
+import { expect } from '@lykmapipo/mongoose-test-helpers';
 import ServiceGroup from '../../src/servicegroup.model';
 
 describe('ServiceGroup', () => {
@@ -19,9 +16,13 @@ describe('ServiceGroup', () => {
       });
     });
 
-    it('should expose default locale `en` when not set', () => {
-      expect(ServiceGroup.DEFAULT_LOCALE).to.exist;
-      expect(ServiceGroup.DEFAULT_LOCALE).to.equal('en');
+    it('should expose field select option', () => {
+      expect(ServiceGroup.OPTION_SELECT).to.exist;
+      expect(ServiceGroup.OPTION_SELECT).to.be.eql({
+        code: 1,
+        name: 1,
+        color: 1,
+      });
     });
   });
 });
