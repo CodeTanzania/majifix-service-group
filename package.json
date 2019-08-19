@@ -1,6 +1,6 @@
 {
   "name": "@codetanzania/majifix-service-group",
-  "version": "1.2.6",
+  "version": "1.3.0",
   "description": "A representation of an entity that group services offered by a jurisdiction(s) into meaningful categories e.g Sanitation.",
   "main": "lib/index.js",
   "module": "es/index.js",
