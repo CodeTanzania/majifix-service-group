@@ -18,7 +18,10 @@
     "cmt": "git add -A && git-cz",
     "changelog": "changelog",
     "chore:deps": "ncu -u && npm install --save",
-    "lint:config": "eslint --print-config rollup.config.js"
+    "lint:config": "eslint --print-config rollup.config.js",
+    "dev": "npm run seed && npm run start",
+    "start": "BASE_PATH=./examples node ./examples/app.js",
+    "seed": "BASE_PATH=./examples node ./examples/seed.js"
   },
   "keywords": [
     "codetanzania",
