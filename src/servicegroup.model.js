@@ -17,58 +17,49 @@
  * @version 1.0.0
  * @public
  */
-
-/* dependencies */
 import _ from 'lodash';
-import async from 'async';
-import randomColor from 'randomcolor';
-import mongoose from 'mongoose';
+import { idOf, randomColor, compact, mergeObjects } from '@lykmapipo/common';
+import { createSchema, model, ObjectId } from '@lykmapipo/mongoose-common';
+import {
+  localize,
+  localizedIndexesFor,
+  localizedKeysFor,
+  localizedValuesFor,
+} from 'mongoose-locale-schema';
 import actions from 'mongoose-rest-actions';
-import localize from 'mongoose-locale-schema';
-import { schema, models } from '@codetanzania/majifix-common';
-import { getString, getStrings } from '@lykmapipo/env';
+import exportable from '@lykmapipo/mongoose-exportable';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { Priority } from '@codetanzania/majifix-priority';
+import {
+  POPULATION_MAX_DEPTH,
+  MODEL_NAME_SERVICEGROUP,
+  MODEL_NAME_SERVICE,
+  MODEL_NAME_SERVICEREQUEST,
+  COLLECTION_NAME_SERVICEGROUP,
+  PATH_NAME_SERVICEGROUP,
+  checkDependenciesFor,
+} from '@codetanzania/majifix-common';
 
-const { Schema } = mongoose;
-const { ObjectId } = Schema.Types;
-
-/* local constants */
-const JURISDICTION_PATH = 'jurisdiction';
-const PRIORITY_PATH = 'priority';
-const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
-const LOCALES = getStrings('LOCALES', ['en']);
-const SCHEMA_OPTIONS = { timestamps: true, emitIndexErrors: true };
+/* constants */
+const OPTION_SELECT = { code: 1, name: 1, color: 1 };
 const OPTION_AUTOPOPULATE = {
-  select: { code: 1, name: 1, color: 1 },
-  maxDepth: schema.POPULATION_MAX_DEPTH,
+  select: OPTION_SELECT,
+  maxDepth: POPULATION_MAX_DEPTH,
 };
-const {
-  SERVICEGROUP_MODEL_NAME,
-  JURISDICTION_MODEL_NAME,
-  SERVICE_MODEL_NAME,
-  SERVICEREQUEST_MODEL_NAME,
-  PRIORITY_MODEL_NAME,
-  getModel,
-} = models;
-
-/* declarations */
-const locales = _.map(LOCALES, function setLocales(locale) {
-  const option = { name: locale };
-  if (locale === DEFAULT_LOCALE) {
-    option.required = true;
-  }
-  return option;
-});
+const SCHEMA_OPTIONS = { collection: COLLECTION_NAME_SERVICEGROUP };
+const INDEX_UNIQUE = {
+  jurisdiction: 1,
+  code: 1,
+  ...localizedIndexesFor('name'),
+};
 
 /**
  * @name ServiceGroupSchema
- * @type {Schema}
  * @since 0.1.0
  * @version 1.0.0
  * @private
  */
-const ServiceGroupSchema = new Schema(
+const ServiceGroupSchema = createSchema(
   {
     /**
      * @name jurisdiction
@@ -82,8 +73,6 @@ const ServiceGroupSchema = new Schema(
      * @property {string} ref - referenced collection
      * @property {boolean} exists - ensure ref exists before save
      * @property {object} autopopulate - jurisdiction population options
-     * @property {object} autopopulate.select - jurisdiction fields to
-     * select when populating
      * @property {boolean} index - ensure database index
      * @since 0.1.0
      * @version 1.0.0
@@ -91,8 +80,8 @@ const ServiceGroupSchema = new Schema(
      */
     jurisdiction: {
       type: ObjectId,
-      ref: JURISDICTION_MODEL_NAME,
-      exists: true,
+      ref: Jurisdiction.MODEL_NAME,
+      exists: { refresh: true, select: Jurisdiction.OPTION_SELECT },
       autopopulate: Jurisdiction.OPTION_AUTOPOPULATE,
       index: true,
     },
@@ -106,7 +95,6 @@ const ServiceGroupSchema = new Schema(
      * @type {object}
      * @property {object} type - schema(data) type
      * @property {string} ref - referenced collection
-     * @property {boolean} autoset - allow to set id from full object
      * @property {boolean} exists - ensure ref exists before save
      * @property {object} autopopulate - jurisdiction population options
      * @property {boolean} index - ensure database index
@@ -116,8 +104,8 @@ const ServiceGroupSchema = new Schema(
      */
     priority: {
       type: ObjectId,
-      ref: PRIORITY_MODEL_NAME,
-      exists: true,
+      ref: Priority.MODEL_NAME,
+      exists: { refresh: true, select: Priority.OPTION_SELECT },
       autopopulate: Priority.OPTION_AUTOPOPULATE,
       index: true,
     },
@@ -136,6 +124,8 @@ const ServiceGroupSchema = new Schema(
      * @property {boolean} required - mark required
      * @property {boolean} uppercase - force upper-casing
      * @property {boolean} index - ensure database index
+     * @property {boolean} taggable - allow field use for tagging
+     * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
      * @property {object} fake - fake data generator options
      * @since 0.1.0
@@ -148,6 +138,8 @@ const ServiceGroupSchema = new Schema(
       required: true,
       uppercase: true,
       index: true,
+      taggable: true,
+      exportable: true,
       searchable: true,
       fake: {
         generator: 'finance',
@@ -165,6 +157,8 @@ const ServiceGroupSchema = new Schema(
      * @property {boolean} trim - force trimming
      * @property {boolean} required - mark required
      * @property {boolean} index - ensure database index
+     * @property {boolean} taggable - allow field use for tagging
+     * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
      * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
@@ -175,13 +169,14 @@ const ServiceGroupSchema = new Schema(
     name: localize({
       type: String,
       trim: true,
-      required: true,
       index: true,
+      taggable: true,
+      exportable: true,
       searchable: true,
-      locales,
       fake: {
-        generator: 'random',
-        type: 'word',
+        generator: 'hacker',
+        type: 'noun',
+        unique: true,
       },
     }),
 
@@ -194,6 +189,7 @@ const ServiceGroupSchema = new Schema(
      * @property {object} type - schema(data) type
      * @property {boolean} trim - force trimming
      * @property {boolean} index - ensure database index
+     * @property {boolean} exportable - allow field to be exporteds
      * @property {boolean} searchable - allow for searching
      * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
@@ -205,8 +201,8 @@ const ServiceGroupSchema = new Schema(
       type: String,
       trim: true,
       index: true,
+      exportable: true,
       searchable: true,
-      locales,
       fake: {
         generator: 'lorem',
         type: 'paragraph',
@@ -225,6 +221,7 @@ const ServiceGroupSchema = new Schema(
      * @property {object} type - schema(data) type
      * @property {boolean} trim - force trimming
      * @property {boolean} uppercase - force upper-casing
+     * @property {boolean} exportable - allow field to be exported
      * @property {boolean} default - default value set when none provided
      * @property {object} fake - fake data generator options
      * @since 0.1.0
@@ -234,66 +231,118 @@ const ServiceGroupSchema = new Schema(
     color: {
       type: String,
       trim: true,
+      exportable: true,
       uppercase: true,
-      default() {
-        return randomColor().toUpperCase();
-      },
+      default: () => randomColor(),
+      fake: true,
+    },
+
+    /**
+     * @name default
+     * @description Tells whether a service group is the default.
+     *
+     * @type {object}
+     * @property {object} type - schema(data) type
+     * @property {boolean} index - ensure database index
+     * @property {boolean} exportable - allow field to be exported
+     * @property {boolean} default - default value set when none provided
+     * @property {object|boolean} fake - fake data generator options
+     *
+     * @author lally elias <lallyelias87@gmail.com>
+     * @since 0.1.0
+     * @version 0.1.0
+     * @instance
+     * @example
+     * false
+     *
+     */
+    default: {
+      type: Boolean,
+      index: true,
+      exportable: true,
+      default: false,
       fake: true,
     },
   },
-  SCHEMA_OPTIONS
+  SCHEMA_OPTIONS,
+  actions,
+  exportable
 );
 
 /*
- *------------------------------------------------------------------------------------
+ *------------------------------------------------------------------------------
  * Indexes
- *------------------------------------------------------------------------------------
+ *------------------------------------------------------------------------------
  */
 
-// ensure `unique` compound index on jurisdiction, code and name
-// to fix unique indexes on code and name in case they are used in more than
-// one jurisdiction with different administration
-_.forEach(locales, function ensureIndex(locale) {
-  const field = `name.${locale.name}`;
-  ServiceGroupSchema.index(
-    { jurisdiction: 1, code: 1, [field]: 1 },
-    { unique: true }
-  );
+/**
+ * @name index
+ * @description ensure unique compound index on service group name, code
+ * and jurisdiction to force unique service group definition
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ */
+ServiceGroupSchema.index(INDEX_UNIQUE, { unique: true });
+
+/*
+ *------------------------------------------------------------------------------
+ * Hooks
+ *------------------------------------------------------------------------------
+ */
+
+/**
+ * @name validate
+ * @description service group schema pre validation hook
+ * @param {Function} done callback to invoke on success or error
+ * @since 0.1.0
+ * @version 1.0.0
+ * @private
+ */
+ServiceGroupSchema.pre('validate', function preValidate(next) {
+  return this.preValidate(next);
 });
 
 /*
- *------------------------------------------------------------------------------------
- * Hooks
- *------------------------------------------------------------------------------------
+ *------------------------------------------------------------------------------
+ * Instance
+ *------------------------------------------------------------------------------
  */
 
-ServiceGroupSchema.pre('validate', function preValidate(next) {
+/**
+ * @name preValidate
+ * @description service group schema pre validation hook logic
+ * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
+ * @since 0.1.0
+ * @version 1.0.0
+ * @instance
+ */
+ServiceGroupSchema.methods.preValidate = function preValidate(done) {
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
   }
 
   // set service group code
-  if (_.isEmpty(this.code) && !_.isEmpty(this.name)) {
-    this.code = _.take(this.name, 1)
+  if (_.isEmpty(this.code) && !_.isEmpty(this.name.en)) {
+    this.code = _.take(this.name.en, 1)
       .join('')
       .toUpperCase();
   }
 
-  next();
-});
-
-/*
- *------------------------------------------------------------------------------------
- * Instance
- *------------------------------------------------------------------------------------
- */
+  // continue
+  return done();
+};
 
 /**
  * @name beforeDelete
  * @function beforeDelete
  * @description pre delete service group logics
- * @param  {function} done callback to invoke on success or error
+ * @param  {Function} done callback to invoke on success or error
+ * @returns {object|Error} dependence free instance or error
  * @since 0.1.0
  * @version 1.0.0
  * @instance
@@ -301,204 +350,115 @@ ServiceGroupSchema.pre('validate', function preValidate(next) {
 ServiceGroupSchema.methods.beforeDelete = function beforeDelete(done) {
   // restrict delete if
 
-  async.parallel(
-    {
-      // 1...there are services use the group
-      service: function checkServiceDependency(next) {
-        // get service model
-        const Service = getModel(SERVICE_MODEL_NAME);
+  // collect dependencies model name
+  const dependencies = [MODEL_NAME_SERVICE, MODEL_NAME_SERVICEREQUEST];
 
-        // check service dependency
-        if (Service) {
-          Service.count(
-            { group: this._id }, // eslint-disable-line no-underscore-dangle
-            function cb(error, count) {
-              let cbError = error;
-              // warning can not delete
-              if (count && count > 0) {
-                const errorMessage = `Fail to Delete. ${count} services depend on it`;
-                cbError = new Error(errorMessage);
-              }
+  // path to check
+  const path = PATH_NAME_SERVICEGROUP;
 
-              // ensure error status
-              if (cbError) {
-                cbError.status = 400;
-              }
-
-              // return
-              next(cbError, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-
-      // 1...there are service request use the group
-      serviceRequest: function checkServiceRequestDependency(next) {
-        // get service request model
-        const ServiceRequest = getModel(SERVICEREQUEST_MODEL_NAME);
-
-        // check service request dependency
-        if (ServiceRequest) {
-          ServiceRequest.count(
-            { group: this._id }, // eslint-disable-line no-underscore-dangle
-            function cb(error, count) {
-              let cbError = error;
-              // warning can not delete
-              if (count && count > 0) {
-                const errorMessage = `Fail to Delete. ${count} service requests depend on it`;
-                cbError = new Error(errorMessage);
-              }
-
-              // ensure error status
-              if (cbError) {
-                cbError.status = 400;
-              }
-
-              // return
-              next(cbError, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-    },
-    function cb(error) {
-      done(error, this);
-    }.bind(this)
-  );
-};
-
-/**
- * @name beforePost
- * @function beforePost
- * @description pre save service group logics
- * @param  {function} done callback to invoke on success or error
- *
- * @since 0.1.0
- * @version 1.0.0
- * @instance
- */
-ServiceGroupSchema.methods.beforePost = function beforePost(done) {
-  // pre loads
-  async.parallel(
-    {
-      // 1...preload jurisdiction
-      jurisdiction: function preloadJurisdiction(next) {
-        // ensure jurisdiction is pre loaded before post(save)
-        const jurisdictionId = this.jurisdiction
-          ? this.jurisdiction._id // eslint-disable-line no-underscore-dangle
-          : this.jurisdiction;
-
-        // prefetch existing jurisdiction
-        if (jurisdictionId) {
-          Jurisdiction.getById(
-            jurisdictionId,
-            function cb(error, jurisdiction) {
-              // assign existing jurisdiction
-              if (jurisdiction) {
-                this.jurisdiction = jurisdiction;
-              }
-
-              // return
-              next(error, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-
-      // 1...preload priority
-      priority: function preloadPriority(next) {
-        // ensure priority is pre loaded before post(save)
-        const priorityId = this.priority ? this.priority._id : this.priority; // eslint-disable-line no-underscore-dangle
-
-        // prefetch existing priority
-        if (priorityId) {
-          Priority.getById(
-            priorityId,
-            function cb(error, priority) {
-              // assign existing priority
-              if (priority) {
-                this.priority = priority;
-              }
-
-              // return
-              next(error, this);
-            }.bind(this)
-          );
-        }
-
-        // continue
-        else {
-          next();
-        }
-      }.bind(this),
-    },
-    function cb(error) {
-      done(error, this);
-    }.bind(this)
-  );
-};
-
-/**
- * @name afterPost
- * @function afterPost
- * @description post save service group logics
- * @param  {function} done callback to invoke on success or error
- * @since 0.1.0
- * @version 1.0.0
- * @instance
- */
-ServiceGroupSchema.methods.afterPost = function afterPost(done) {
-  // ensure jurisdiction is populated after post(save)
-  const jurisdiction = _.merge(
-    {},
-    { path: JURISDICTION_PATH },
-    Jurisdiction.OPTION_AUTOPOPULATE
-  );
-  this.populate(jurisdiction);
-
-  // ensure priority is populated after post(save)
-  const priority = _.merge(
-    {},
-    { path: PRIORITY_PATH },
-    Priority.OPTION_AUTOPOPULATE
-  );
-  this.populate(priority, done);
+  // do check dependencies
+  return checkDependenciesFor(this, { path, dependencies }, done);
 };
 
 /*
- *------------------------------------------------------------------------------------
+ *------------------------------------------------------------------------------
  * Statics
- *------------------------------------------------------------------------------------
+ *------------------------------------------------------------------------------
  */
 
-/* expose static constants */
-ServiceGroupSchema.statics.MODEL_NAME = SERVICEGROUP_MODEL_NAME;
+/* static constants */
+ServiceGroupSchema.statics.MODEL_NAME = MODEL_NAME_SERVICEGROUP;
+ServiceGroupSchema.statics.OPTION_SELECT = OPTION_SELECT;
 ServiceGroupSchema.statics.OPTION_AUTOPOPULATE = OPTION_AUTOPOPULATE;
-ServiceGroupSchema.statics.DEFAULT_LOCALE = DEFAULT_LOCALE;
 
-/*
- *------------------------------------------------------------------------------------
- * Plugins
- *------------------------------------------------------------------------------------
+/**
+ * @name findDefault
+ * @function findDefault
+ * @description find default service group
+ * @param {Function} done a callback to invoke on success or failure
+ * @returns {ServiceGroup} default service group
+ * @since 0.1.0
+ * @version 1.0.0
+ * @static
  */
+ServiceGroupSchema.statics.findDefault = done => {
+  // refs
+  const ServiceGroup = model(MODEL_NAME_SERVICEGROUP);
 
-/* use mongoose rest actions */
-ServiceGroupSchema.plugin(actions);
+  // obtain default service group
+  return ServiceGroup.getOneOrDefault({}, done);
+};
+
+/**
+ * @name prepareSeedCriteria
+ * @function prepareSeedCriteria
+ * @description define seed data criteria
+ * @param {object} seed service group to be seeded
+ * @returns {object} packed criteria for seeding
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.5.0
+ * @version 0.1.0
+ * @static
+ */
+ServiceGroupSchema.statics.prepareSeedCriteria = seed => {
+  const names = localizedKeysFor('name');
+
+  const copyOfSeed = seed;
+  copyOfSeed.name = localizedValuesFor(seed.name);
+
+  const criteria = idOf(copyOfSeed)
+    ? _.pick(copyOfSeed, '_id')
+    : _.pick(copyOfSeed, 'jurisdiction', 'code', ...names);
+
+  return criteria;
+};
+
+/**
+ * @name getOneOrDefault
+ * @function getOneOrDefault
+ * @description Find existing service group or default based on given criteria
+ * @param {object} criteria valid query criteria
+ * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} found service group or error
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.5.0
+ * @version 0.1.0
+ * @static
+ * @example
+ *
+ * const criteria = { _id: '...'};
+ * ServiceGroup.getOneOrDefault(criteria, (error, found) => { ... });
+ *
+ */
+ServiceGroupSchema.statics.getOneOrDefault = (criteria, done) => {
+  // normalize criteria
+  const { _id, ...filters } = mergeObjects(criteria);
+
+  const allowDefault = true;
+  const allowId = !_.isEmpty(_id);
+  const allowFilters = !_.isEmpty(filters);
+
+  const byDefault = mergeObjects({ default: true });
+  const byId = mergeObjects({ _id });
+  const byFilters = mergeObjects(filters);
+
+  const or = compact([
+    allowId ? byId : undefined,
+    allowFilters ? byFilters : undefined,
+    allowDefault ? byDefault : undefined,
+  ]);
+  const filter = { $or: or };
+
+  // refs
+  const ServiceGroup = model(MODEL_NAME_SERVICEGROUP);
+
+  // query
+  return ServiceGroup.findOne(filter)
+    .orFail()
+    .exec(done);
+};
 
 /* export servicegroup model */
-export default mongoose.model(SERVICEGROUP_MODEL_NAME, ServiceGroupSchema);
+export default model(MODEL_NAME_SERVICEGROUP, ServiceGroupSchema);
