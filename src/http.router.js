@@ -1,6 +1,3 @@
-'use strict';
-
-
 /**
  * @apiDefine ServiceGroup  ServiceGroup
  *
@@ -18,7 +15,6 @@
  * @version 1.0.0
  * @public
  */
-
 
 /**
  * @apiDefine ServiceGroup
@@ -39,7 +35,6 @@
  * @apiSuccess {Date} updatedAt Date when service group was last updated
  *
  */
-
 
 /**
  * @apiDefine ServiceGroups
@@ -70,7 +65,6 @@
  *
  */
 
-
 /**
  * @apiDefine ServiceGroupSuccessResponse
  * @apiSuccessExample {json} Success-Response:
@@ -93,7 +87,6 @@
  *       "updatedAt": "2018-05-07T07:24:54.490Z"
  *    }
  */
-
 
 /**
  * @apiDefine ServiceGroupsSuccessResponse
@@ -128,28 +121,32 @@
  *   "lastModified": "2018-05-07T07:22:43.771Z"
  * }
  */
+import { getString } from '@lykmapipo/env';
+import {
+  getFor,
+  schemaFor,
+  downloadFor,
+  getByIdFor,
+  postFor,
+  patchFor,
+  putFor,
+  deleteFor,
+  Router,
+} from '@lykmapipo/express-rest-actions';
+import ServiceGroup from './servicegroup.model';
 
-
-/* dependencies */
-const path = require('path');
-const _ = require('lodash');
-const { getString } = require('@lykmapipo/env');
-const Router = require('@lykmapipo/express-common').Router;
-
-
-/* local constants */
-const API_VERSION = getString('API_VERSION','1.0.0');
-const PATH_LIST = '/servicegroups';
+/* constants */
+const API_VERSION = getString('API_VERSION', '1.0.0');
 const PATH_SINGLE = '/servicegroups/:id';
+const PATH_LIST = '/servicegroups';
+const PATH_EXPORT = '/servicegroups/export';
+const PATH_SCHEMA = '/servicegroups/schema/';
 const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/servicegroups';
 
-
 /* declarations */
-const ServiceGroup = require(path.join(__dirname, 'servicegroup.model'));
 const router = new Router({
-  version: API_VERSION
+  version: API_VERSION,
 });
-
 
 /**
  * @api {get} /servicegroups List Service Groups
@@ -167,29 +164,49 @@ const router = new Router({
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_LIST, function getServiceGroups(request, response, next) {
+router.get(
+  PATH_LIST,
+  getFor({
+    get: (options, done) => ServiceGroup.get(options, done),
+  })
+);
 
-  //obtain request options
-  const options = _.merge({}, request.mquery);
+/**
+ * @api {get} /servicegroups/schema Get ServiceGroup Schema
+ * @apiVersion 1.0.0
+ * @apiName GetServiceGroupSchema
+ * @apiGroup ServiceGroup
+ * @apiDescription Returns servicegroup json schema definition
+ * @apiUse RequestHeaders
+ */
+router.get(
+  PATH_SCHEMA,
+  schemaFor({
+    getSchema: (query, done) => {
+      const jsonSchema = ServiceGroup.jsonSchema();
+      return done(null, jsonSchema);
+    },
+  })
+);
 
-  ServiceGroup
-    .get(options, function onGetServiceGroups(error, results) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(results);
-      }
-
-    });
-
-});
-
+/**
+ * @api {get} /servicegroups/export Export ServiceGroups
+ * @apiVersion 1.0.0
+ * @apiName ExportServiceGroups
+ * @apiGroup ServiceGroup
+ * @apiDescription Export servicegroups as csv
+ * @apiUse RequestHeaders
+ */
+router.get(
+  PATH_EXPORT,
+  downloadFor({
+    download: (options, done) => {
+      const fileName = `servicegroups_exports_${Date.now()}.csv`;
+      const readStream = ServiceGroup.exportCsv(options);
+      return done(null, { fileName, readStream });
+    },
+  })
+);
 
 /**
  * @api {post} /servicegroups Create New Service Group
@@ -207,29 +224,12 @@ router.get(PATH_LIST, function getServiceGroups(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.post(PATH_LIST, function postServiceGroup(request, response, next) {
-
-  //obtain request body
-  const body = _.merge({}, request.body);
-
-  ServiceGroup
-    .post(body, function onPostServiceGroup(error, created) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(201);
-        response.json(created);
-      }
-
-    });
-
-});
-
+router.post(
+  PATH_LIST,
+  postFor({
+    post: (body, done) => ServiceGroup.post(body, done),
+  })
+);
 
 /**
  * @api {get} /servicegroups/:id Get Existing Service Group
@@ -247,32 +247,12 @@ router.post(PATH_LIST, function postServiceGroup(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_SINGLE, function getServiceGroup(request, response, next) {
-
-  //obtain request options
-  const options = _.merge({}, request.mquery);
-
-  //obtain service group id
-  options._id = request.params.id;
-
-  ServiceGroup
-    .getById(options, function onGetServiceGroup(error, found) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(found);
-      }
-
-    });
-
-});
-
+router.get(
+  PATH_SINGLE,
+  getByIdFor({
+    getById: (options, done) => ServiceGroup.getById(options, done),
+  })
+);
 
 /**
  * @api {patch} /servicegroups/:id Patch Existing Service Group
@@ -290,32 +270,12 @@ router.get(PATH_SINGLE, function getServiceGroup(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.patch(PATH_SINGLE, function patchServiceGroup(request, response, next) {
-
-  //obtain service group id
-  const { id } = request.params;
-
-  //obtain request body
-  const patches = _.merge({}, request.body);
-
-  ServiceGroup
-    .patch(id, patches, function onPatchServiceGroup(error, patched) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(patched);
-      }
-
-    });
-
-});
-
+router.patch(
+  PATH_SINGLE,
+  patchFor({
+    patch: (options, done) => ServiceGroup.patch(options, done),
+  })
+);
 
 /**
  * @api {put} /servicegroups/:id Put Existing Service Group
@@ -333,32 +293,12 @@ router.patch(PATH_SINGLE, function patchServiceGroup(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.put(PATH_SINGLE, function putServiceGroup(request, response, next) {
-
-  //obtain service group id
-  const { id } = request.params.id;
-
-  //obtain request body
-  const updates = _.merge({}, request.body);
-
-  ServiceGroup
-    .put(id, updates, function onPutServiceGroup(error, updated) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(updated);
-      }
-
-    });
-
-});
-
+router.put(
+  PATH_SINGLE,
+  putFor({
+    put: (options, done) => ServiceGroup.put(options, done),
+  })
+);
 
 /**
  * @api {delete} /servicegroups/:id Delete Existing Service Group
@@ -376,29 +316,13 @@ router.put(PATH_SINGLE, function putServiceGroup(request, response, next) {
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.delete(PATH_SINGLE, function deleteServiceGroup(request, response, next) {
-
-  //obtain service group id
-  const { id } = request.params;
-
-  ServiceGroup
-    .del(id, function onDeleteServiceGroup(error, deleted) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(deleted);
-      }
-
-    });
-
-});
-
+router.delete(
+  PATH_SINGLE,
+  deleteFor({
+    del: (options, done) => ServiceGroup.del(options, done),
+    soft: true,
+  })
+);
 
 /**
  * @api {get} /jurisdictions/:jurisdiction/servicegroups List Jurisdiction Service Groups
@@ -416,33 +340,12 @@ router.delete(PATH_SINGLE, function deleteServiceGroup(request, response, next) 
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(PATH_JURISDICTION, function getServiceGroups(request, response, next) {
-
-  //obtain request options
-  const { jurisdiction } = request.params;
-  const filter =
-    (jurisdiction ? { filter: { jurisdiction: jurisdiction } } : {}); //TODO support parent and no jurisdiction
-  const options =
-    _.merge({}, filter, request.mquery);
-
-  ServiceGroup
-    .get(options, function onGetServiceGroups(error, found) {
-
-      //forward error
-      if (error) {
-        next(error);
-      }
-
-      //handle response
-      else {
-        response.status(200);
-        response.json(found);
-      }
-
-    });
-
-});
-
+router.get(
+  PATH_JURISDICTION,
+  getFor({
+    get: (options, done) => ServiceGroup.get(options, done),
+  })
+);
 
 /* expose router */
-module.exports = router;
+export default router;
