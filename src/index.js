@@ -15,19 +15,14 @@
  * @example
  *
  * const { app } = require('majifix-service-group');
- *
- * ...
- *
  * app.start();
  *
  */
-
-/* dependencies */
 import { pkg } from '@lykmapipo/common';
 import ServiceGroup from './servicegroup.model';
 import router from './http.router';
 
-/* declarations */
+/* extract package information */
 const info = pkg(
   `${__dirname}/package.json`,
   'name',
