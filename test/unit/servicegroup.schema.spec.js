@@ -14,7 +14,8 @@ describe('ServiceGroup', () => {
       expect(jurisdiction.type).to.be.a('function');
       expect(jurisdiction.type.name).to.be.equal('ObjectId');
       expect(jurisdiction.index).to.be.true;
-      expect(jurisdiction.exists).to.be.true;
+      expect(jurisdiction.exists).to.be.exist.and.be.an('object');
+      expect(jurisdiction.autopopulate).to.exist.and.be.an('object');
     });
 
     it('should have priority field', () => {
@@ -27,7 +28,8 @@ describe('ServiceGroup', () => {
       expect(priority.type).to.be.a('function');
       expect(priority.type.name).to.be.equal('ObjectId');
       expect(priority.index).to.be.true;
-      expect(priority.exists).to.be.true;
+      expect(priority.exists).to.be.exist.and.be.an('object');
+      expect(priority.autopopulate).to.exist.and.be.an('object');
     });
 
     it('should have code field', () => {

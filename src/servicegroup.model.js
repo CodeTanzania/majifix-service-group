@@ -176,7 +176,6 @@ const ServiceGroupSchema = createSchema(
       fake: {
         generator: 'hacker',
         type: 'noun',
-        unique: true,
       },
     }),
 
