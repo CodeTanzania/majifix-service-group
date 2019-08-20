@@ -107,9 +107,9 @@
     "mongoose": ">=5.6.9"
   },
   "dependencies": {
-    "@codetanzania/majifix-common": ">=0.15.0",
-    "@codetanzania/majifix-jurisdiction": ">=1.7.0",
-    "@codetanzania/majifix-priority": ">=1.5.0",
+    "@codetanzania/majifix-common": ">=0.15.1",
+    "@codetanzania/majifix-jurisdiction": ">=1.7.2",
+    "@codetanzania/majifix-priority": ">=1.5.1",
     "@lykmapipo/common": ">=0.25.1",
     "@lykmapipo/env": ">=0.12.1",
     "@lykmapipo/express-common": ">=0.17.10",
@@ -122,7 +122,7 @@
     "moment": ">=2.24.0",
     "mongoose-geojson-schemas": ">=0.10.9",
     "mongoose-locale-schema": ">=0.4.0",
-    "mongoose-rest-actions": ">=0.28.7"
+    "mongoose-rest-actions": ">=0.28.8"
   },
   "engines": {
     "node": ">=12.4.0",
