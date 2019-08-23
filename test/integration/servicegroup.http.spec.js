@@ -1,10 +1,10 @@
 import request from 'supertest';
 import { app, mount } from '@lykmapipo/express-common';
 import { clear, expect } from '@lykmapipo/mongoose-test-helpers';
-import { ServiceGroup, apiVersion, router } from '../../src';
+import { ServiceGroup, apiVersion, servicegroupRouter } from '../../src';
 
 describe('ServiceGroup', () => {
-  mount(router);
+  mount(servicegroupRouter);
   describe('Rest API', () => {
     let servicegroup;
 

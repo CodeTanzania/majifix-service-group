@@ -28,16 +28,14 @@ npm install @codetanzania/majifix-service-group --save
 ## Usage
 
 ```js
-const mongoose = require('mongoose');
-const { app } = require('@codetanzania/majifix-service-group');
+import { connect } from '@lykmapipo/mongoose-common';
+import { ServiceGroup, start } from '@codetanzania/majifix-service-group';
 
-//connect to mongodb
-mongoose.connect(process.env.MONGODB_URI);
+// connect to mongodb
+connect(process.env.MONGODB_URI, error => { ... });
 
-//fire the app
-app.start(function(error, env) {
-  ...
-});
+// fire http server
+start(error => { ... });
 ```
 
 ## Testing
