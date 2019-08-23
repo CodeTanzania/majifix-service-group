@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { waterfall } = require('async');
-const { connect } = require('@lykmapipo/mongoose-common');
+const { connect, clear } = require('@lykmapipo/mongoose-common');
 const { Jurisdiction } = require('@codetanzania/majifix-jurisdiction');
 const { ServiceGroup } = require('../lib');
 
@@ -21,39 +21,26 @@ const log = (stage, error, results) => {
 };
 /* eslint-enable */
 
-connect(err => {
-  if (err) {
-    throw err;
-  }
+const clearSeed = next => clear(ServiceGroup, Jurisdiction, () => next());
 
+const seedJurisdiction = next => Jurisdiction.fake().post(next);
+
+const seedServiceGroup = (jurisdiction, next) => {
+  let serviceGroups = ServiceGroup.fake(50);
+
+  serviceGroups = _.forEach(serviceGroups, group => {
+    const sample = group;
+    sample.jurisdiction = jurisdiction;
+    return sample;
+  });
+
+  ServiceGroup.create(serviceGroups, next);
+};
+
+const seed = () => {
+  seedEnd = Date.now();
   waterfall(
-    [
-      function clearJurisdiction(next) {
-        Jurisdiction.deleteMany(() => next());
-      },
-
-      function clearServiceGroup(next) {
-        ServiceGroup.deleteMany(() => next());
-      },
-
-      function seedJurisdiction(next) {
-        const jurisdiction = Jurisdiction.fake();
-        jurisdiction.post(next);
-      },
-
-      function seedServiceGroup(jurisdiction, next) {
-        seedStart = Date.now;
-        let serviceGroups = ServiceGroup.fake(50);
-
-        serviceGroups = _.forEach(serviceGroups, group => {
-          const sample = group;
-          sample.jurisdiction = jurisdiction;
-          return sample;
-        });
-
-        ServiceGroup.create(serviceGroups, next);
-      },
-    ],
+    [clearSeed, seedJurisdiction, seedServiceGroup],
     (error, results) => {
       if (error) {
         throw error;
@@ -65,4 +52,12 @@ connect(err => {
       process.exit(0);
     }
   );
+};
+
+// connect and seed
+connect(error => {
+  if (error) {
+    throw error;
+  }
+  seed();
 });
