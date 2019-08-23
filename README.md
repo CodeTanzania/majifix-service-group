@@ -1,9 +1,15 @@
 # majifix-service-group
 
-[![Build Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service-group)
-[![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service-group/status.svg?style=flat-square)](https://david-dm.org/CodeTanzania/majifix-service-group)
-[![Coverage Status](https://coveralls.io/repos/github/CodeTanzania/majifix-service-group/badge.svg?branch=develop)](https://coveralls.io/github/CodeTanzania/majifix-service-group?branch=develop)
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service-group/tree/develop)
+[![Build Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=master)](https://travis-ci.org/CodeTanzania/majifix-service-group)
+[![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service-group.svg)](https://david-dm.org/CodeTanzania/majifix-service-group)
+[![Coverage Status](https://coveralls.io/repos/github/CodeTanzania/majifix-service-group/badge.svg?branch=master)](https://coveralls.io/github/CodeTanzania/majifix-service-group?branch=master)
+[![GitHub License](https://img.shields.io/github/license/CodeTanzania/majifix-service-group)](https://github.com/CodeTanzania/majifix-service-group/blob/master/LICENSE)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service-group/tree/develop) 
+
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Code Style](https://badgen.net/badge/code%20style/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript)
+[![npm version](https://img.shields.io/npm/v/@codetanzania/majifix-service-group)](https://www.npmjs.com/package/@codetanzania/majifix-service-group)
 
 A representation of an entity that group services offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
 
