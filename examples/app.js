@@ -1,8 +1,8 @@
 const app = require('@lykmapipo/express-common');
 const { connect, jsonSchema } = require('@lykmapipo/mongoose-common');
-const { router, info, apiVersion } = require('../lib/index');
+const { serviceGroupRouter, info, apiVersion } = require('../lib/index');
 
-app.mount(router);
+app.mount(serviceGroupRouter);
 
 connect(connectionError => {
   if (connectionError) {

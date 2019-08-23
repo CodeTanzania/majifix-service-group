@@ -22,7 +22,7 @@ import { pkg } from '@lykmapipo/common';
 import { apiVersion as httpApiVersion } from '@lykmapipo/env';
 import { start } from '@lykmapipo/express-common';
 import ServiceGroup from './servicegroup.model';
-import servicegroupRouter from './servicegroup.http.router';
+import serviceGroupRouter from './servicegroup.http.router';
 
 /**
  * @name info
@@ -57,14 +57,14 @@ export const info = pkg(
 export { ServiceGroup };
 
 /**
- * @name servicegroupRouter
+ * @name serviceGroupRouter
  * @description servicegroup http router
  *
  * @author lally elias <lallyelias87@gmail.com>
  * @since 0.1.0
  * @version 0.1.0
  */
-export { servicegroupRouter };
+export { serviceGroupRouter };
 
 /**
  * @name apiVersion
