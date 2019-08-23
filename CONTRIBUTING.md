@@ -23,7 +23,7 @@ All work happens directly on [GitHub](https://github.com/CodeTanzania/majifix-se
 
 We will do our best to keep the [`master` branch](https://github.com/CodeTanzania/majifix-service-group/tree/master) in good shape, with tests passing at all times. 
 
-If you send a pull request, please do it against the [`master` branch](https://github.com/CodeTanzania/majifix-service-group/tree/master).
+If you send a pull request, please do it against the [`develop` branch](https://github.com/CodeTanzania/majifix-service-group/tree/develop).
 
 
 ## Semantic Versioning
