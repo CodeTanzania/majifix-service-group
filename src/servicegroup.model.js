@@ -19,6 +19,7 @@
  */
 import _ from 'lodash';
 import { idOf, randomColor, compact, mergeObjects } from '@lykmapipo/common';
+import { getString } from '@lykmapipo/env';
 import { createSchema, model, ObjectId } from '@lykmapipo/mongoose-common';
 import {
   localize,
@@ -41,6 +42,7 @@ import {
 } from '@codetanzania/majifix-common';
 
 /* constants */
+const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
 const OPTION_SELECT = { code: 1, name: 1, color: 1 };
 const OPTION_AUTOPOPULATE = {
   select: OPTION_SELECT,
@@ -160,7 +162,6 @@ const ServiceGroupSchema = createSchema(
      * @property {boolean} taggable - allow field use for tagging
      * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
-     * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 1.0.0
@@ -190,7 +191,6 @@ const ServiceGroupSchema = createSchema(
      * @property {boolean} index - ensure database index
      * @property {boolean} exportable - allow field to be exporteds
      * @property {boolean} searchable - allow for searching
-     * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 1.0.0
@@ -326,8 +326,8 @@ ServiceGroupSchema.methods.preValidate = function preValidate(done) {
   }
 
   // set service group code
-  if (_.isEmpty(this.code) && !_.isEmpty(this.name.en)) {
-    this.code = _.take(this.name.en, 1)
+  if (_.isEmpty(this.code) && !_.isEmpty(this.name[DEFAULT_LOCALE])) {
+    this.code = _.take(this.name[DEFAULT_LOCALE], 1)
       .join('')
       .toUpperCase();
   }
