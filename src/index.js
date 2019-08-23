@@ -20,7 +20,7 @@
  */
 import { pkg } from '@lykmapipo/common';
 import { apiVersion as httpApiVersion } from '@lykmapipo/env';
-import { start } from '@lykmapipo/express-rest-actions';
+import { start } from '@lykmapipo/express-common';
 import ServiceGroup from './servicegroup.model';
 import servicegroupRouter from './servicegroup.http.router';
 
