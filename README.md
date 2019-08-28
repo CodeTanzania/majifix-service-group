@@ -1,8 +1,8 @@
 # majifix-service-group
 
-[![Build Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=master)](https://travis-ci.org/CodeTanzania/majifix-service-group)
+[![Build Status](https://travis-ci.org/CodeTanzania/majifix-service-group.svg?branch=develop)](https://travis-ci.org/CodeTanzania/majifix-service-group)
 [![Dependencies Status](https://david-dm.org/CodeTanzania/majifix-service-group.svg)](https://david-dm.org/CodeTanzania/majifix-service-group)
-[![Coverage Status](https://coveralls.io/repos/github/CodeTanzania/majifix-service-group/badge.svg?branch=master)](https://coveralls.io/github/CodeTanzania/majifix-service-group?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/CodeTanzania/majifix-service-group/badge.svg?branch=develop)](https://coveralls.io/github/CodeTanzania/majifix-service-group?branch=develop)
 [![GitHub License](https://img.shields.io/github/license/CodeTanzania/majifix-service-group)](https://github.com/CodeTanzania/majifix-service-group/blob/develop/LICENSE)
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/CodeTanzania/majifix-service-group/tree/develop) 
 
