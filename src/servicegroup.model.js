@@ -318,6 +318,9 @@ ServiceGroupSchema.methods.preValidate = function preValidate(done) {
   // ensure name for all locales
   this.name = localizedValuesFor(this.name);
 
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
