@@ -1,144 +1,149 @@
-import request from 'supertest';
-import { app, mount } from '@lykmapipo/express-common';
-import { clear, expect } from '@lykmapipo/mongoose-test-helpers';
-import { ServiceGroup, apiVersion, serviceGroupRouter } from '../../src';
+import {
+  clear as clearHttp,
+  testRouter,
+} from '@lykmapipo/express-test-helpers';
+import {
+  clear as clearDb,
+  create,
+  expect,
+} from '@lykmapipo/mongoose-test-helpers';
+import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
+import { ServiceGroup, serviceGroupRouter } from '../../src';
 
-describe('ServiceGroup', () => {
-  mount(serviceGroupRouter);
-  describe('Rest API', () => {
-    let servicegroup;
+describe('ServiceGroup Rest API', () => {
+  const jurisdiction = Jurisdiction.fake();
+  const serviceGroup = ServiceGroup.fake();
+  serviceGroup.set({ jurisdiction });
 
-    before(done => clear(ServiceGroup, done));
+  const options = {
+    pathSingle: '/servicegroups/:id',
+    pathList: '/servicegroups',
+    pathSchema: '/servicegroups/schema/',
+    pathExport: '/servicegroups/export/',
+  };
 
-    it('should handle HTTP POST on /servicegroups', done => {
-      servicegroup = ServiceGroup.fake();
+  before(done => clearDb(ServiceGroup, Jurisdiction, done));
 
-      request(app)
-        .post(`/${apiVersion}/servicegroups`)
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .send(servicegroup)
-        .expect(201)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
+  before(() => clearHttp());
 
-          const created = response.body;
+  before(done => create(jurisdiction, done));
 
-          expect(created._id).to.exist;
-          expect(created.code).to.exist;
-          expect(created.name).to.exist;
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP GET on /servicegroups', done => {
-      request(app)
-        .get(`/${apiVersion}/servicegroups`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .expect('Content-Type', /json/)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          // assert payload
-          const result = response.body;
-          expect(result.data).to.exist;
-          expect(result.total).to.exist;
-          expect(result.limit).to.exist;
-          expect(result.skip).to.exist;
-          expect(result.page).to.exist;
-          expect(result.pages).to.exist;
-          expect(result.lastModified).to.exist;
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP GET on /servicegroups/id:', done => {
-      request(app)
-        .get(`/${apiVersion}/servicegroups/${servicegroup._id}`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const found = response.body;
-          expect(found._id).to.exist;
-          expect(found._id).to.be.equal(servicegroup._id.toString());
-          expect(found.name.en).to.be.equal(servicegroup.name.en);
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP PATCH on /servicegroups/id:', done => {
-      const patch = servicegroup.fakeOnly('name');
-
-      request(app)
-        .patch(`/${apiVersion}/servicegroups/${servicegroup._id}`)
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .send(patch)
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const patched = response.body;
-
-          expect(patched._id).to.exist;
-          expect(patched._id).to.be.equal(servicegroup._id.toString());
-          expect(patched.name.en).to.be.equal(servicegroup.name.en);
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP PUT on /servicegroups/id:', done => {
-      const put = servicegroup.fakeOnly('name');
-
-      request(app)
-        .put(`/${apiVersion}/servicegroups/${servicegroup._id}`)
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .send(put)
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const updated = response.body;
-
-          expect(updated._id).to.exist;
-          expect(updated._id).to.be.equal(servicegroup._id.toString());
-          expect(updated.name.en).to.be.equal(servicegroup.name.en);
-
-          done(error, response);
-        });
-    });
-
-    it('should handle HTTP DELETE on /servicegroups/:id', done => {
-      request(app)
-        .delete(`/${apiVersion}/servicegroups/${servicegroup._id}`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .end((error, response) => {
-          expect(error).to.not.exist;
-          expect(response).to.exist;
-
-          const deleted = response.body;
-
-          expect(deleted._id).to.exist;
-          expect(deleted._id).to.be.equal(servicegroup._id.toString());
-          expect(deleted.name.en).to.be.equal(servicegroup.name.en);
-
-          done(error, response);
-        });
-    });
-
-    after(done => clear('ServiceGroup', done));
+  it('should handle HTTP POST on /servicegroups', done => {
+    const { testPost } = testRouter(options, serviceGroupRouter);
+    testPost({ ...serviceGroup.toObject() })
+      .expect(201)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const created = new ServiceGroup(body);
+        expect(created._id).to.exist.and.be.eql(serviceGroup._id);
+        expect(created.code).to.exist.and.be.eql(serviceGroup.code);
+        done(error, body);
+      });
   });
+
+  it('should handle HTTP GET on /servicegroups', done => {
+    const { testGet } = testRouter(options, serviceGroupRouter);
+    testGet()
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        expect(body.data).to.exist;
+        expect(body.total).to.exist;
+        expect(body.limit).to.exist;
+        expect(body.skip).to.exist;
+        expect(body.page).to.exist;
+        expect(body.pages).to.exist;
+        expect(body.lastModified).to.exist;
+        done(error, body);
+      });
+  });
+
+  it('should handle GET /servicegroups/schema', done => {
+    const { testGetSchema } = testRouter(options, serviceGroupRouter);
+    testGetSchema().expect(200, done);
+  });
+
+  it('should handle GET /servicegroups/export', done => {
+    const { testGetExport } = testRouter(options, serviceGroupRouter);
+    testGetExport()
+      .expect('Content-Type', 'text/csv; charset=utf-8')
+      .expect(({ headers }) => {
+        expect(headers['content-disposition']).to.exist;
+      })
+      .expect(200, done);
+  });
+
+  it('should handle HTTP GET on /servicegroups/:id', done => {
+    const { testGet } = testRouter(options, serviceGroupRouter);
+    const params = { id: serviceGroup._id.toString() };
+    testGet(params)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const found = new ServiceGroup(body);
+        expect(found._id).to.exist.and.be.eql(serviceGroup._id);
+        expect(found.code).to.exist.and.be.eql(serviceGroup.code);
+        done(error, body);
+      });
+  });
+
+  it('should handle HTTP PATCH on /servicegroups/:id', done => {
+    const { testPatch } = testRouter(options, serviceGroupRouter);
+    const { description } = serviceGroup.fakeOnly('description');
+    const params = { id: serviceGroup._id.toString() };
+    testPatch(params, { description })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const patched = new ServiceGroup(body);
+        expect(patched._id).to.exist.and.be.eql(serviceGroup._id);
+        expect(patched.code).to.exist.and.be.eql(serviceGroup.code);
+        done(error, body);
+      });
+  });
+
+  it('should handle HTTP PUT on /servicegroups/:id', done => {
+    const { testPut } = testRouter(options, serviceGroupRouter);
+    const { description } = serviceGroup.fakeOnly('description');
+    const params = { id: serviceGroup._id.toString() };
+    testPut(params, { description })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const patched = new ServiceGroup(body);
+        expect(patched._id).to.exist.and.be.eql(serviceGroup._id);
+        expect(patched.code).to.exist.and.be.eql(serviceGroup.code);
+        done(error, body);
+      });
+  });
+
+  it('should handle HTTP DELETE on /servicegroups/:id', done => {
+    const { testDelete } = testRouter(options, serviceGroupRouter);
+    const params = { id: serviceGroup._id.toString() };
+    testDelete(params)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((error, { body }) => {
+        expect(error).to.not.exist;
+        expect(body).to.exist;
+        const patched = new ServiceGroup(body);
+        expect(patched._id).to.exist.and.be.eql(serviceGroup._id);
+        expect(patched.code).to.exist.and.be.eql(serviceGroup.code);
+        done(error, body);
+      });
+  });
+
+  after(() => clearHttp());
+
+  after(done => clearDb(ServiceGroup, Jurisdiction, done));
 });

@@ -27,9 +27,9 @@
     "codetanzania",
     "majifix",
     "majifix-module",
+    "open311",
     "service-group",
-    "group",
-    "open311"
+    "group"
   ],
   "repository": {
     "type": "git",
@@ -67,9 +67,12 @@
     "@babel/node": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
+    "@benmaruchu/faker": "4.3.0",
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
     "@commitlint/travis-cli": "^8.1.0",
+    "@lykmapipo/express-test-helpers": "^0.8.6",
+    "@lykmapipo/mongoose-test-helpers": "0.7.18",
     "chai": "^4.2.0",
     "commitizen": "^4.0.3",
     "coveralls": "^3.0.6",
@@ -88,20 +91,13 @@
     "lint-staged": "^9.2.5",
     "lodash.template": "^4.5.0",
     "mocha": "^6.2.0",
+    "mongoose": "5.6.9",
     "npm-check-updates": "^3.1.21",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
     "rollup": "^1.20.3",
-    "shelljs": "^0.8.3",
-    "@benmaruchu/faker": "4.3.0",
-    "@lykmapipo/mongoose-test-helpers": "0.7.18",
-    "mongoose": "5.6.9",
-    "sinon": "7.4.1",
-    "sinon-chai": "3.3.0",
-    "sinon-mongoose": "2.3.0",
-    "supertest": "4.0.2",
-    "winston": "^3.2.1"
+    "shelljs": "^0.8.3"
   },
   "peerDependencies": {
     "mongoose": ">=5.6.11"
@@ -120,7 +116,6 @@
     "express": ">=4.17.1",
     "lodash": ">=4.17.15",
     "moment": ">=2.24.0",
-    "mongoose-geojson-schemas": ">=0.10.9",
     "mongoose-locale-schema": ">=0.4.0",
     "mongoose-rest-actions": ">=0.28.8"
   },
