@@ -290,6 +290,7 @@ ServiceGroupSchema.index(INDEX_UNIQUE, { unique: true });
  * @name validate
  * @description service group schema pre validation hook
  * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
  * @since 0.1.0
  * @version 1.0.0
  * @private
@@ -314,6 +315,9 @@ ServiceGroupSchema.pre('validate', function preValidate(next) {
  * @instance
  */
 ServiceGroupSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -327,7 +331,7 @@ ServiceGroupSchema.methods.preValidate = function preValidate(done) {
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**
