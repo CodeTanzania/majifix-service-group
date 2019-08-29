@@ -1,3 +1,48 @@
+#### 1.4.0 (2019-08-29)
+
+##### Chores
+
+* **examples:**  improve sample app & seed ([bb4d7b81](https://github.com/CodeTanzania/majifix-service-group/commit/bb4d7b81ecb2d3b9622fac943c0862df8c87ed25))
+* **deps:**
+  *  force latest version & audit fix ([a153ab34](https://github.com/CodeTanzania/majifix-service-group/commit/a153ab34bec788002f7ef3713051d5ce7d2f2cfc))
+  *  force latest version & audit fix ([ee006d99](https://github.com/CodeTanzania/majifix-service-group/commit/ee006d99866df9077221ab7699af4b37abe4a530))
+  *  force latest version & audit fix ([c7254cdb](https://github.com/CodeTanzania/majifix-service-group/commit/c7254cdb04d7ae46528f8f22ecc0a3da67a91e7a))
+*  ensure exit & timeout mocha option on test scripts ([46a563bc](https://github.com/CodeTanzania/majifix-service-group/commit/46a563bcb2f42075ef5cc9e7d9d04edea3c5ff0e))
+* **configs:**
+  *  remove docs from gitignore ([d9cd1062](https://github.com/CodeTanzania/majifix-service-group/commit/d9cd10620870651a876246e10c17e6b57a31d50d))
+  *  update ignore files ([03523809](https://github.com/CodeTanzania/majifix-service-group/commit/035238094292b1fb2ae3f6c1f4c8ee38a7f84955))
+* **example:**  apply lint & improve setup ([01d6c687](https://github.com/CodeTanzania/majifix-service-group/commit/01d6c6878e136186267903a9586c91f23e6efab4))
+* **ci:**
+  *  force use latest node version ([3f3cc9ae](https://github.com/CodeTanzania/majifix-service-group/commit/3f3cc9aef95390853786ccbc73fd3fb735a404de))
+  *  add redis requirements ([bdd785f0](https://github.com/CodeTanzania/majifix-service-group/commit/bdd785f0c5f77e3f6295b4c9e741c9b8c11e551d))
+
+##### Documentation Changes
+
+*  update requirements version ([2bfe5c3e](https://github.com/CodeTanzania/majifix-service-group/commit/2bfe5c3e3cdb80c4b145f99be7700968fba8b30f))
+*  drop api doc folder ([1884924f](https://github.com/CodeTanzania/majifix-service-group/commit/1884924f1b718e139698cd4c64357baf8052e07c))
+*  update licence path ([f4e9add7](https://github.com/CodeTanzania/majifix-service-group/commit/f4e9add746d9dd806dbfd3c8f7ba3a2a656423ee))
+*  update status badges ([b90085a0](https://github.com/CodeTanzania/majifix-service-group/commit/b90085a00398177ffdb2386a13e3749883a7dd11))
+*  correct branch organization section ([56393853](https://github.com/CodeTanzania/majifix-service-group/commit/56393853aa8b965dbef423ae7b395f4d1feee80a))
+*  add contribiting & code of conduct ([b254b350](https://github.com/CodeTanzania/majifix-service-group/commit/b254b3509aec282107379fee5e2868132374fa9d))
+
+##### New Features
+
+*  esnure values for all description locales ([4cb4c0e7](https://github.com/CodeTanzania/majifix-service-group/commit/4cb4c0e784930279b9970cba59d4544e554273b5))
+*  esnure values for all name locales ([1b728aed](https://github.com/CodeTanzania/majifix-service-group/commit/1b728aeda5b86aac435dbadabd29267c733cc78a))
+
+##### Refactors
+
+*  correct start source for http server ([3c7867a8](https://github.com/CodeTanzania/majifix-service-group/commit/3c7867a8f2780dee4db63ff251c0b3700dd0167f))
+* **router:**  extract apidoc and improve usage docs ([00f5d116](https://github.com/CodeTanzania/majifix-service-group/commit/00f5d116f1f6533c02fe6e18505fa5dd5031ee5f))
+
+##### Code Style Changes
+
+* **model:**  improve schema docs ([21d6c22a](https://github.com/CodeTanzania/majifix-service-group/commit/21d6c22a6630928bbf0fc69ecc08d1fbbaa7c013))
+
+##### Tests
+
+*  refactor http specs to use test helpers ([9150d8a8](https://github.com/CodeTanzania/majifix-service-group/commit/9150d8a854284f3cbf1f8db7354b113aa44c150b))
+
 #### 1.3.1 (2019-08-20)
 
 ##### Chores
