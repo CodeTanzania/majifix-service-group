@@ -14,16 +14,26 @@
  * @license MIT
  * @example
  *
- * const { app } = require('majifix-service-group');
- * app.start();
+ * const { ServiceGroup, start } = require('majifix-service-group');
+ * start(error => { ... });
  *
  */
 import { pkg } from '@lykmapipo/common';
+import { apiVersion as httpApiVersion } from '@lykmapipo/env';
+import { start } from '@lykmapipo/express-common';
 import ServiceGroup from './servicegroup.model';
-import router from './http.router';
+import serviceGroupRouter from './servicegroup.http.router';
 
-/* extract package information */
-const info = pkg(
+/**
+ * @name info
+ * @description package information
+ * @type {object}
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.0.0
+ * @version 0.1.0
+ */
+export const info = pkg(
   `${__dirname}/package.json`,
   'name',
   'description',
@@ -36,7 +46,44 @@ const info = pkg(
   'contributors'
 );
 
-// extract router api version
-const apiVersion = router.version;
+/**
+ * @name ServiceGroup
+ * @description ServiceGroup model
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+export { ServiceGroup };
 
-export { apiVersion, info, ServiceGroup, router };
+/**
+ * @name serviceGroupRouter
+ * @description servicegroup http router
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+export { serviceGroupRouter };
+
+/**
+ * @name apiVersion
+ * @description http router api version
+ * @type {string}
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+export const apiVersion = httpApiVersion();
+
+/**
+ * @function start
+ * @name start
+ * @description start http server
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+export { start };

@@ -1,24 +1,6 @@
-/**
- * @module ServiceGroup
- * @name ServiceGroup
- * @description A representation of an entity that group service
- * offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
- *
- * It provides a way to group several service request types
- * (issues) under meaningful categories such as Sanitation,
- * Commercial, Billing, Non-Commercial etc.
- *
- * @requires https://github.com/CodeTanzania/majifix-jurisdiction
- * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction}
- * @author Benson Maruchu <benmaruchu@gmail.com>
- * @author lally elias <lallyelias87@gmail.com>
- * @license MIT
- * @since 0.1.0
- * @version 1.0.0
- * @public
- */
 import _ from 'lodash';
 import { idOf, randomColor, compact, mergeObjects } from '@lykmapipo/common';
+import { getString } from '@lykmapipo/env';
 import { createSchema, model, ObjectId } from '@lykmapipo/mongoose-common';
 import {
   localize,
@@ -41,6 +23,7 @@ import {
 } from '@codetanzania/majifix-common';
 
 /* constants */
+const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
 const OPTION_SELECT = { code: 1, name: 1, color: 1 };
 const OPTION_AUTOPOPULATE = {
   select: OPTION_SELECT,
@@ -54,10 +37,23 @@ const INDEX_UNIQUE = {
 };
 
 /**
- * @name ServiceGroupSchema
+ * @module ServiceGroup
+ * @name ServiceGroup
+ * @description A representation of an entity that group service
+ * offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
+ *
+ * It provides a way to group several service request types
+ * (issues) under meaningful categories such as Sanitation,
+ * Commercial, Billing, Non-Commercial etc.
+ *
+ * @requires https://github.com/CodeTanzania/majifix-jurisdiction
+ * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction}
+ * @author Benson Maruchu <benmaruchu@gmail.com>
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
  * @since 0.1.0
  * @version 1.0.0
- * @private
+ * @public
  */
 const ServiceGroupSchema = createSchema(
   {
@@ -160,7 +156,6 @@ const ServiceGroupSchema = createSchema(
      * @property {boolean} taggable - allow field use for tagging
      * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
-     * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 1.0.0
@@ -190,7 +185,6 @@ const ServiceGroupSchema = createSchema(
      * @property {boolean} index - ensure database index
      * @property {boolean} exportable - allow field to be exporteds
      * @property {boolean} searchable - allow for searching
-     * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 1.0.0
@@ -296,6 +290,7 @@ ServiceGroupSchema.index(INDEX_UNIQUE, { unique: true });
  * @name validate
  * @description service group schema pre validation hook
  * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
  * @since 0.1.0
  * @version 1.0.0
  * @private
@@ -320,20 +315,26 @@ ServiceGroupSchema.pre('validate', function preValidate(next) {
  * @instance
  */
 ServiceGroupSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
   }
 
   // set service group code
-  if (_.isEmpty(this.code) && !_.isEmpty(this.name.en)) {
-    this.code = _.take(this.name.en, 1)
+  if (_.isEmpty(this.code) && !_.isEmpty(this.name[DEFAULT_LOCALE])) {
+    this.code = _.take(this.name[DEFAULT_LOCALE], 1)
       .join('')
       .toUpperCase();
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**

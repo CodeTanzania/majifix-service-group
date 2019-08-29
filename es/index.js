@@ -1,14 +1,29 @@
 import { randomColor, idOf, mergeObjects, compact, pkg } from '@lykmapipo/common';
+import { getString, apiVersion as apiVersion$1 } from '@lykmapipo/env';
+export { start } from '@lykmapipo/express-common';
 import _ from 'lodash';
 import { model, createSchema, ObjectId } from '@lykmapipo/mongoose-common';
-import { localizedIndexesFor, localize, localizedKeysFor, localizedValuesFor } from 'mongoose-locale-schema';
+import { localizedIndexesFor, localize, localizedValuesFor, localizedKeysFor } from 'mongoose-locale-schema';
 import actions from 'mongoose-rest-actions';
 import exportable from '@lykmapipo/mongoose-exportable';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { Priority } from '@codetanzania/majifix-priority';
 import { MODEL_NAME_SERVICEGROUP, checkDependenciesFor, POPULATION_MAX_DEPTH, COLLECTION_NAME_SERVICEGROUP, MODEL_NAME_SERVICE, MODEL_NAME_SERVICEREQUEST, PATH_NAME_SERVICEGROUP } from '@codetanzania/majifix-common';
-import { getString } from '@lykmapipo/env';
 import { Router, getFor, schemaFor, downloadFor, postFor, getByIdFor, patchFor, putFor, deleteFor } from '@lykmapipo/express-rest-actions';
+
+/* constants */
+const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
+const OPTION_SELECT = { code: 1, name: 1, color: 1 };
+const OPTION_AUTOPOPULATE = {
+  select: OPTION_SELECT,
+  maxDepth: POPULATION_MAX_DEPTH,
+};
+const SCHEMA_OPTIONS = { collection: COLLECTION_NAME_SERVICEGROUP };
+const INDEX_UNIQUE = {
+  jurisdiction: 1,
+  code: 1,
+  ...localizedIndexesFor('name'),
+};
 
 /**
  * @module ServiceGroup
@@ -28,26 +43,6 @@ import { Router, getFor, schemaFor, downloadFor, postFor, getByIdFor, patchFor, 
  * @since 0.1.0
  * @version 1.0.0
  * @public
- */
-
-/* constants */
-const OPTION_SELECT = { code: 1, name: 1, color: 1 };
-const OPTION_AUTOPOPULATE = {
-  select: OPTION_SELECT,
-  maxDepth: POPULATION_MAX_DEPTH,
-};
-const SCHEMA_OPTIONS = { collection: COLLECTION_NAME_SERVICEGROUP };
-const INDEX_UNIQUE = {
-  jurisdiction: 1,
-  code: 1,
-  ...localizedIndexesFor('name'),
-};
-
-/**
- * @name ServiceGroupSchema
- * @since 0.1.0
- * @version 1.0.0
- * @private
  */
 const ServiceGroupSchema = createSchema(
   {
@@ -150,7 +145,6 @@ const ServiceGroupSchema = createSchema(
      * @property {boolean} taggable - allow field use for tagging
      * @property {boolean} exportable - allow field to be exported
      * @property {boolean} searchable - allow for searching
-     * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 1.0.0
@@ -180,7 +174,6 @@ const ServiceGroupSchema = createSchema(
      * @property {boolean} index - ensure database index
      * @property {boolean} exportable - allow field to be exporteds
      * @property {boolean} searchable - allow for searching
-     * @property {string[]}  locales - list of supported locales
      * @property {object} fake - fake data generator options
      * @since 0.1.0
      * @version 1.0.0
@@ -286,6 +279,7 @@ ServiceGroupSchema.index(INDEX_UNIQUE, { unique: true });
  * @name validate
  * @description service group schema pre validation hook
  * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
  * @since 0.1.0
  * @version 1.0.0
  * @private
@@ -310,20 +304,26 @@ ServiceGroupSchema.pre('validate', function preValidate(next) {
  * @instance
  */
 ServiceGroupSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
   }
 
   // set service group code
-  if (_.isEmpty(this.code) && !_.isEmpty(this.name.en)) {
-    this.code = _.take(this.name.en, 1)
+  if (_.isEmpty(this.code) && !_.isEmpty(this.name[DEFAULT_LOCALE])) {
+    this.code = _.take(this.name[DEFAULT_LOCALE], 1)
       .join('')
       .toUpperCase();
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**
@@ -450,10 +450,19 @@ ServiceGroupSchema.statics.getOneOrDefault = (criteria, done) => {
 /* export servicegroup model */
 var ServiceGroup = model(MODEL_NAME_SERVICEGROUP, ServiceGroupSchema);
 
+/* constants */
+const API_VERSION = getString('API_VERSION', '1.0.0');
+const PATH_SINGLE = '/servicegroups/:id';
+const PATH_LIST = '/servicegroups';
+const PATH_EXPORT = '/servicegroups/export';
+const PATH_SCHEMA = '/servicegroups/schema/';
+const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/servicegroups';
+
 /**
- * @apiDefine ServiceGroup  ServiceGroup
+ * @name ServiceGroupHttpRouter
+ * @namespace ServiceGroupHttpRouter
  *
- * @apiDescription A representation of an entity that group service
+ * @description A representation of an entity that group service
  * offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
  *
  * It provides a way to group several service request types
@@ -467,35 +476,14 @@ var ServiceGroup = model(MODEL_NAME_SERVICEGROUP, ServiceGroupSchema);
  * @version 1.0.0
  * @public
  */
-
-/* constants */
-const API_VERSION = getString('API_VERSION', '1.0.0');
-const PATH_SINGLE = '/servicegroups/:id';
-const PATH_LIST = '/servicegroups';
-const PATH_EXPORT = '/servicegroups/export';
-const PATH_SCHEMA = '/servicegroups/schema/';
-const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/servicegroups';
-
-/* declarations */
 const router = new Router({
   version: API_VERSION,
 });
 
 /**
- * @api {get} /servicegroups List Service Groups
- * @apiVersion 1.0.0
- * @apiName GetServiceGroups
- * @apiGroup ServiceGroup
- * @apiDescription Returns a list of service groups
- * @apiUse RequestHeaders
- * @apiUse ServiceGroups
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupsSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetServiceGroups
+ * @memberof ServiceGroupHttpRouter
+ * @description Returns a list of service groups
  */
 router.get(
   PATH_LIST,
@@ -505,12 +493,9 @@ router.get(
 );
 
 /**
- * @api {get} /servicegroups/schema Get ServiceGroup Schema
- * @apiVersion 1.0.0
- * @apiName GetServiceGroupSchema
- * @apiGroup ServiceGroup
- * @apiDescription Returns servicegroup json schema definition
- * @apiUse RequestHeaders
+ * @name GetServiceGroupSchema
+ * @memberof ServiceGroupHttpRouter
+ * @description Returns servicegroup json schema definition
  */
 router.get(
   PATH_SCHEMA,
@@ -523,12 +508,9 @@ router.get(
 );
 
 /**
- * @api {get} /servicegroups/export Export ServiceGroups
- * @apiVersion 1.0.0
- * @apiName ExportServiceGroups
- * @apiGroup ServiceGroup
- * @apiDescription Export servicegroups as csv
- * @apiUse RequestHeaders
+ * @name ExportServiceGroups
+ * @memberof ServiceGroupHttpRouter
+ * @description Export servicegroups as csv
  */
 router.get(
   PATH_EXPORT,
@@ -542,20 +524,9 @@ router.get(
 );
 
 /**
- * @api {post} /servicegroups Create New Service Group
- * @apiVersion 1.0.0
- * @apiName PostServiceGroup
- * @apiGroup ServiceGroup
- * @apiDescription Create new service group
- * @apiUse RequestHeaders
- * @apiUse ServiceGroup
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name PostServiceGroup
+ * @memberof ServiceGroupHttpRouter
+ * @description Create new service group
  */
 router.post(
   PATH_LIST,
@@ -565,20 +536,9 @@ router.post(
 );
 
 /**
- * @api {get} /servicegroups/:id Get Existing Service Group
- * @apiVersion 1.0.0
- * @apiName GetServiceGroup
- * @apiGroup ServiceGroup
- * @apiDescription Get existing service group
- * @apiUse RequestHeaders
- * @apiUse ServiceGroup
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetServiceGroup
+ * @memberof ServiceGroupHttpRouter
+ * @description Get existing service group
  */
 router.get(
   PATH_SINGLE,
@@ -588,20 +548,9 @@ router.get(
 );
 
 /**
- * @api {patch} /servicegroups/:id Patch Existing Service Group
- * @apiVersion 1.0.0
- * @apiName PatchServiceGroup
- * @apiGroup ServiceGroup
- * @apiDescription Patch existing service group
- * @apiUse RequestHeaders
- * @apiUse ServiceGroup
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name PatchServiceGroup
+ * @memberof ServiceGroupHttpRouter
+ * @description Patch existing service group
  */
 router.patch(
   PATH_SINGLE,
@@ -611,20 +560,9 @@ router.patch(
 );
 
 /**
- * @api {put} /servicegroups/:id Put Existing Service Group
- * @apiVersion 1.0.0
- * @apiName PutServiceGroup
- * @apiGroup ServiceGroup
- * @apiDescription Put existing service group
- * @apiUse RequestHeaders
- * @apiUse ServiceGroup
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name PutServiceGroup
+ * @memberof ServiceGroupHttpRouter
+ * @description Put existing service group
  */
 router.put(
   PATH_SINGLE,
@@ -634,20 +572,9 @@ router.put(
 );
 
 /**
- * @api {delete} /servicegroups/:id Delete Existing Service Group
- * @apiVersion 1.0.0
- * @apiName DeleteServiceGroup
- * @apiGroup ServiceGroup
- * @apiDescription Delete existing service group
- * @apiUse RequestHeaders
- * @apiUse ServiceGroup
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name DeleteServiceGroup
+ * @memberof ServiceGroupHttpRouter
+ * @description Delete existing service group
  */
 router.delete(
   PATH_SINGLE,
@@ -658,20 +585,9 @@ router.delete(
 );
 
 /**
- * @api {get} /jurisdictions/:jurisdiction/servicegroups List Jurisdiction Service Groups
- * @apiVersion 1.0.0
- * @apiName GetJurisdictionServiceGroups
- * @apiGroup ServiceGroup
- * @apiDescription Returns a list of servicegroups of specified jurisdiction
- * @apiUse RequestHeaders
- * @apiUse ServiceGroups
- *
- * @apiUse RequestHeadersExample
- * @apiUse ServiceGroupsSuccessResponse
- * @apiUse JWTError
- * @apiUse JWTErrorExample
- * @apiUse AuthorizationHeaderError
- * @apiUse AuthorizationHeaderErrorExample
+ * @name GetJurisdictionServiceGroups
+ * @memberof ServiceGroupHttpRouter
+ * @description Returns a list of servicegroups of specified jurisdiction
  */
 router.get(
   PATH_JURISDICTION,
@@ -696,12 +612,20 @@ router.get(
  * @license MIT
  * @example
  *
- * const { app } = require('majifix-service-group');
- * app.start();
+ * const { ServiceGroup, start } = require('majifix-service-group');
+ * start(error => { ... });
  *
  */
 
-/* extract package information */
+/**
+ * @name info
+ * @description package information
+ * @type {object}
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 1.0.0
+ * @version 0.1.0
+ */
 const info = pkg(
   `${__dirname}/package.json`,
   'name',
@@ -715,7 +639,15 @@ const info = pkg(
   'contributors'
 );
 
-// extract router api version
-const apiVersion = router.version;
+/**
+ * @name apiVersion
+ * @description http router api version
+ * @type {string}
+ *
+ * @author lally elias <lallyelias87@gmail.com>
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+const apiVersion = apiVersion$1();
 
-export { ServiceGroup, apiVersion, info, router };
+export { ServiceGroup, apiVersion, info, router as serviceGroupRouter };

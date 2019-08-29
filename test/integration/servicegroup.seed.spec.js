@@ -5,7 +5,7 @@ import { ServiceGroup } from '../../src';
 
 describe('ServiceGroup Seed', () => {
   const { SEEDS_PATH } = process.env;
-  let priority;
+  let servicegroup;
 
   before(done => clear(done));
 
@@ -18,7 +18,7 @@ describe('ServiceGroup Seed', () => {
       expect(error).to.not.exist;
       expect(seeded).to.exist;
       expect(seeded).to.length.at.least(1);
-      priority = _.first(seeded);
+      servicegroup = _.first(seeded);
       done(error, seeded);
     });
   });
@@ -53,7 +53,7 @@ describe('ServiceGroup Seed', () => {
   });
 
   it('should not throw if provided exist', done => {
-    const seed = priority.toObject();
+    const seed = servicegroup.toObject();
     ServiceGroup.seed(seed, (error, seeded) => {
       expect(error).to.not.exist;
       expect(seeded).to.exist;

@@ -121,32 +121,6 @@
  *   "lastModified": "2018-05-07T07:22:43.771Z"
  * }
  */
-import { getString } from '@lykmapipo/env';
-import {
-  getFor,
-  schemaFor,
-  downloadFor,
-  getByIdFor,
-  postFor,
-  patchFor,
-  putFor,
-  deleteFor,
-  Router,
-} from '@lykmapipo/express-rest-actions';
-import ServiceGroup from './servicegroup.model';
-
-/* constants */
-const API_VERSION = getString('API_VERSION', '1.0.0');
-const PATH_SINGLE = '/servicegroups/:id';
-const PATH_LIST = '/servicegroups';
-const PATH_EXPORT = '/servicegroups/export';
-const PATH_SCHEMA = '/servicegroups/schema/';
-const PATH_JURISDICTION = '/jurisdictions/:jurisdiction/servicegroups';
-
-/* declarations */
-const router = new Router({
-  version: API_VERSION,
-});
 
 /**
  * @api {get} /servicegroups List Service Groups
@@ -164,12 +138,6 @@ const router = new Router({
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(
-  PATH_LIST,
-  getFor({
-    get: (options, done) => ServiceGroup.get(options, done),
-  })
-);
 
 /**
  * @api {get} /servicegroups/schema Get ServiceGroup Schema
@@ -179,15 +147,6 @@ router.get(
  * @apiDescription Returns servicegroup json schema definition
  * @apiUse RequestHeaders
  */
-router.get(
-  PATH_SCHEMA,
-  schemaFor({
-    getSchema: (query, done) => {
-      const jsonSchema = ServiceGroup.jsonSchema();
-      return done(null, jsonSchema);
-    },
-  })
-);
 
 /**
  * @api {get} /servicegroups/export Export ServiceGroups
@@ -197,16 +156,6 @@ router.get(
  * @apiDescription Export servicegroups as csv
  * @apiUse RequestHeaders
  */
-router.get(
-  PATH_EXPORT,
-  downloadFor({
-    download: (options, done) => {
-      const fileName = `servicegroups_exports_${Date.now()}.csv`;
-      const readStream = ServiceGroup.exportCsv(options);
-      return done(null, { fileName, readStream });
-    },
-  })
-);
 
 /**
  * @api {post} /servicegroups Create New Service Group
@@ -224,12 +173,6 @@ router.get(
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.post(
-  PATH_LIST,
-  postFor({
-    post: (body, done) => ServiceGroup.post(body, done),
-  })
-);
 
 /**
  * @api {get} /servicegroups/:id Get Existing Service Group
@@ -247,12 +190,6 @@ router.post(
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(
-  PATH_SINGLE,
-  getByIdFor({
-    getById: (options, done) => ServiceGroup.getById(options, done),
-  })
-);
 
 /**
  * @api {patch} /servicegroups/:id Patch Existing Service Group
@@ -270,12 +207,6 @@ router.get(
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.patch(
-  PATH_SINGLE,
-  patchFor({
-    patch: (options, done) => ServiceGroup.patch(options, done),
-  })
-);
 
 /**
  * @api {put} /servicegroups/:id Put Existing Service Group
@@ -293,12 +224,6 @@ router.patch(
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.put(
-  PATH_SINGLE,
-  putFor({
-    put: (options, done) => ServiceGroup.put(options, done),
-  })
-);
 
 /**
  * @api {delete} /servicegroups/:id Delete Existing Service Group
@@ -316,13 +241,6 @@ router.put(
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.delete(
-  PATH_SINGLE,
-  deleteFor({
-    del: (options, done) => ServiceGroup.del(options, done),
-    soft: true,
-  })
-);
 
 /**
  * @api {get} /jurisdictions/:jurisdiction/servicegroups List Jurisdiction Service Groups
@@ -340,12 +258,3 @@ router.delete(
  * @apiUse AuthorizationHeaderError
  * @apiUse AuthorizationHeaderErrorExample
  */
-router.get(
-  PATH_JURISDICTION,
-  getFor({
-    get: (options, done) => ServiceGroup.get(options, done),
-  })
-);
-
-/* expose router */
-export default router;
