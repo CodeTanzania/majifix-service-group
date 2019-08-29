@@ -1,22 +1,3 @@
-/**
- * @module ServiceGroup
- * @name ServiceGroup
- * @description A representation of an entity that group service
- * offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
- *
- * It provides a way to group several service request types
- * (issues) under meaningful categories such as Sanitation,
- * Commercial, Billing, Non-Commercial etc.
- *
- * @requires https://github.com/CodeTanzania/majifix-jurisdiction
- * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction}
- * @author Benson Maruchu <benmaruchu@gmail.com>
- * @author lally elias <lallyelias87@gmail.com>
- * @license MIT
- * @since 0.1.0
- * @version 1.0.0
- * @public
- */
 import _ from 'lodash';
 import { idOf, randomColor, compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
@@ -56,10 +37,23 @@ const INDEX_UNIQUE = {
 };
 
 /**
- * @name ServiceGroupSchema
+ * @module ServiceGroup
+ * @name ServiceGroup
+ * @description A representation of an entity that group service
+ * offered by a jurisdiction(s) into meaningful categories e.g Sanitation.
+ *
+ * It provides a way to group several service request types
+ * (issues) under meaningful categories such as Sanitation,
+ * Commercial, Billing, Non-Commercial etc.
+ *
+ * @requires https://github.com/CodeTanzania/majifix-jurisdiction
+ * @see {@link https://github.com/CodeTanzania/majifix-jurisdiction}
+ * @author Benson Maruchu <benmaruchu@gmail.com>
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
  * @since 0.1.0
  * @version 1.0.0
- * @private
+ * @public
  */
 const ServiceGroupSchema = createSchema(
   {
@@ -296,6 +290,7 @@ ServiceGroupSchema.index(INDEX_UNIQUE, { unique: true });
  * @name validate
  * @description service group schema pre validation hook
  * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
  * @since 0.1.0
  * @version 1.0.0
  * @private
@@ -320,6 +315,12 @@ ServiceGroupSchema.pre('validate', function preValidate(next) {
  * @instance
  */
 ServiceGroupSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -333,7 +334,7 @@ ServiceGroupSchema.methods.preValidate = function preValidate(done) {
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**

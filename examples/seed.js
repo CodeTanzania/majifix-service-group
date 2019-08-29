@@ -8,7 +8,6 @@ const { ServiceGroup } = require('../lib');
 let seedStart;
 let seedEnd;
 
-/* eslint-disable */
 const log = (stage, error, results) => {
   if (error) {
     console.error(`${stage} seed error`, error);
@@ -19,7 +18,6 @@ const log = (stage, error, results) => {
     console.info(`${stage} seed result`, val);
   }
 };
-/* eslint-enable */
 
 const clearSeed = next => clear(ServiceGroup, Jurisdiction, () => next());
 
@@ -29,9 +27,8 @@ const seedServiceGroup = (jurisdiction, next) => {
   let serviceGroups = ServiceGroup.fake(50);
 
   serviceGroups = _.forEach(serviceGroups, group => {
-    const sample = group;
-    sample.jurisdiction = jurisdiction;
-    return sample;
+    group.set({ jurisdiction });
+    return group;
   });
 
   ServiceGroup.create(serviceGroups, next);
