@@ -3,13 +3,27 @@ import { getString, apiVersion as apiVersion$1 } from '@lykmapipo/env';
 export { start } from '@lykmapipo/express-common';
 import _ from 'lodash';
 import { model, createSchema, ObjectId } from '@lykmapipo/mongoose-common';
-import { localizedIndexesFor, localize, localizedKeysFor, localizedValuesFor } from 'mongoose-locale-schema';
+import { localizedIndexesFor, localize, localizedValuesFor, localizedKeysFor } from 'mongoose-locale-schema';
 import actions from 'mongoose-rest-actions';
 import exportable from '@lykmapipo/mongoose-exportable';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { Priority } from '@codetanzania/majifix-priority';
 import { MODEL_NAME_SERVICEGROUP, checkDependenciesFor, POPULATION_MAX_DEPTH, COLLECTION_NAME_SERVICEGROUP, MODEL_NAME_SERVICE, MODEL_NAME_SERVICEREQUEST, PATH_NAME_SERVICEGROUP } from '@codetanzania/majifix-common';
 import { Router, getFor, schemaFor, downloadFor, postFor, getByIdFor, patchFor, putFor, deleteFor } from '@lykmapipo/express-rest-actions';
+
+/* constants */
+const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
+const OPTION_SELECT = { code: 1, name: 1, color: 1 };
+const OPTION_AUTOPOPULATE = {
+  select: OPTION_SELECT,
+  maxDepth: POPULATION_MAX_DEPTH,
+};
+const SCHEMA_OPTIONS = { collection: COLLECTION_NAME_SERVICEGROUP };
+const INDEX_UNIQUE = {
+  jurisdiction: 1,
+  code: 1,
+  ...localizedIndexesFor('name'),
+};
 
 /**
  * @module ServiceGroup
@@ -29,27 +43,6 @@ import { Router, getFor, schemaFor, downloadFor, postFor, getByIdFor, patchFor, 
  * @since 0.1.0
  * @version 1.0.0
  * @public
- */
-
-/* constants */
-const DEFAULT_LOCALE = getString('DEFAULT_LOCALE', 'en');
-const OPTION_SELECT = { code: 1, name: 1, color: 1 };
-const OPTION_AUTOPOPULATE = {
-  select: OPTION_SELECT,
-  maxDepth: POPULATION_MAX_DEPTH,
-};
-const SCHEMA_OPTIONS = { collection: COLLECTION_NAME_SERVICEGROUP };
-const INDEX_UNIQUE = {
-  jurisdiction: 1,
-  code: 1,
-  ...localizedIndexesFor('name'),
-};
-
-/**
- * @name ServiceGroupSchema
- * @since 0.1.0
- * @version 1.0.0
- * @private
  */
 const ServiceGroupSchema = createSchema(
   {
@@ -286,6 +279,7 @@ ServiceGroupSchema.index(INDEX_UNIQUE, { unique: true });
  * @name validate
  * @description service group schema pre validation hook
  * @param {Function} done callback to invoke on success or error
+ * @returns {object|Error} valid instance or error
  * @since 0.1.0
  * @version 1.0.0
  * @private
@@ -310,6 +304,12 @@ ServiceGroupSchema.pre('validate', function preValidate(next) {
  * @instance
  */
 ServiceGroupSchema.methods.preValidate = function preValidate(done) {
+  // ensure name for all locales
+  this.name = localizedValuesFor(this.name);
+
+  // ensure description for all locales
+  this.description = localizedValuesFor(this.description);
+
   // set default color if not set
   if (_.isEmpty(this.color)) {
     this.color = randomColor();
@@ -323,7 +323,7 @@ ServiceGroupSchema.methods.preValidate = function preValidate(done) {
   }
 
   // continue
-  return done();
+  return done(null, this);
 };
 
 /**
