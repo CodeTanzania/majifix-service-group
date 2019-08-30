@@ -1,5 +1,5 @@
 import { expect, clear } from '@lykmapipo/mongoose-test-helpers';
-import { ServiceGroup } from '../../src/index';
+import { ServiceGroup } from '../../src';
 
 describe('ServiceGroup getOneOrDefault', () => {
   before(done => clear(done));
