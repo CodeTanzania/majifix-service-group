@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Jurisdiction } from '@codetanzania/majifix-jurisdiction';
 import { create, clear, expect } from '@lykmapipo/mongoose-test-helpers';
-import { ServiceGroup } from '../../src/index';
+import { ServiceGroup } from '../../src';
 
 describe('ServiceGroup static put', () => {
   const jurisdiction = Jurisdiction.fake();
